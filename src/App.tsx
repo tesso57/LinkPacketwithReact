@@ -1,9 +1,11 @@
 import React from 'react';
+import { Header } from './components/Layout/Header';
 import styles from './App.module.css';
 
 function App() {
   return (
     <div className={styles.App}>
+      <Header />
       <header className={styles.AppHeader}>
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
