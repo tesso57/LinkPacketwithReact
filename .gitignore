@@ -21,6 +21,22 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-.vscode/
+.eslintcache
+.vscode/settings.json
 .idea/
+
+# firebase
+.firebase
+.firebaserc
+firebase-debug.log
+firestore.rules
+
+# Firebase cache
+.firebase/
+
+# dotenv environment variables file
+.env
+
+# Local config/setup
+database.rules.json
+
