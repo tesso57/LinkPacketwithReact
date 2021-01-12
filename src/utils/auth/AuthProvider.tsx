@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { auth, firebase } from "../../firebase"
+import { User } from '../types'
 
 type Context = {
 
     login : () => void
     logout : () => void
-    currentUser : firebase.User | null
+    currentUser : User | null
 
 }
 
@@ -17,11 +18,19 @@ const AuthContext = React.createContext<Context>({
 })
 
 const AuthProvider: React.FC = ({children}) => {
-    const [currentUser, setCurrentUser] = useState<null | firebase.User>(null)
+    const [currentUser, setCurrentUser] = useState<null | User>(null)
 
     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-                setCurrentUser(user)            
+        auth.onAuthStateChanged(
+            (user : firebase.User | null) => {
+                if(user !== null){
+                    const tmpUser : User = {
+                        id : user.uid,
+                        displayName : user.displayName,
+                        photoUrl : user.photoURL
+                    }
+                    setCurrentUser(user)            
+                }
             }
         );
     },[])
