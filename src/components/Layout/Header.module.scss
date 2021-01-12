@@ -1,7 +1,6 @@
 @import '../../styles/common.scss';
 
 .Header {
-  width: 100%;
   height: 6.25rem;
   padding: 0rem;
   margin: 0rem;
@@ -13,14 +12,12 @@
 
 .HeaderTitle {
   width: 17.375rem;
-  height: 3.0625rem;
   border: none;
 }
 
 .HeaderIcon {
   margin: 0 0 0 auto;
   width: 3.125rem;
-  height: 3.125rem;
   border: none;
   border-radius: 1.5625rem;
 }
