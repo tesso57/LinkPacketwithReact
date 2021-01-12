@@ -19,6 +19,7 @@ export const Header: FC = () => {
   const user = auth.currentUser;
   const login = auth.login;
 
+const Header: FC = () => {
   return (
     <Toolbar className={styles.Header}>
       <img className={styles.HeaderTitle} src={titleURL} alt="title"></img>
@@ -26,3 +27,6 @@ export const Header: FC = () => {
     </Toolbar>
   );
 };
+
+
+export default Header;
