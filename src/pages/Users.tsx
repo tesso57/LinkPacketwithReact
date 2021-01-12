@@ -9,7 +9,7 @@ type urlProps = {} & RouteComponentProps<{userId : string}>;
 const Users : React.FC<urlProps> = (props) => {
     const history = useHistory();
     const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
-    const [subscribedPackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
+    const [subscribePackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
 
     useEffect(() => {
         //Userを取得
@@ -17,17 +17,31 @@ const Users : React.FC<urlProps> = (props) => {
         docRef.get().then((doc) => {
             if(doc.exists){
                 const tmp = doc.data() as User
-                let tmpPackets : Packet[] = [];
-                //Packetを取得
+
+                //自分のPacketを取得
+                let tmpOwnPackets : Packet[] = [];
                 Promise.all(tmp.packetRefs.map(
                     async packet => {
                         const packetRef = await packet.get()
                         const packetData = packetRef.data() as Packet
-                        tmpPackets.push(packetData)
+                        tmpOwnPackets.push(packetData)
                     }
                 )).then(() => {
-                    setOwnPackets(tmpPackets)
+                    setOwnPackets(tmpOwnPackets)
                 })
+
+                let tmpSubscribePackets : Packet[] = [];
+                //サブスクライブしたPacketを取得
+                Promise.all(tmp.subscribePacketRefs.map(
+                    async packet => {
+                        const packetRef = await packet.get()
+                        const packetData = packetRef.data() as Packet
+                        tmpSubscribePackets.push(packetData)
+                    }
+                )).then(() => {
+                    setSubscribePackets(tmpSubscribePackets)
+                })
+
             }else{
                 history.push('/')
             }
