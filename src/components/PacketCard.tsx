@@ -1,5 +1,5 @@
 import React, { FC, Suspense } from 'react';
-import { Card, CardHeader, CardMedia, CardContent, IconButton } from '@material-ui/core';
+import { Card, CardHeader, CardMedia, IconButton } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import styles from './BookmarkCard.module.scss';
 
@@ -26,7 +26,7 @@ const getOGPImage = (url: string) => {
   throw promise;
 }
 
-const BookmarkCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => {
+const PacketCard: FC<{ title: string, url: string }> = ({ title, url }) => {
   const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
   const img = getOGPImage(CORS_PROXY + url); // 'https://qiita.com/ksyunnnn/items/bfe2b9c568e97bb6b494' WIP
 
@@ -43,14 +43,11 @@ const BookmarkCard: FC<{ title: string, description: string, url: string }> = ({
         }
       />
       <CardMedia className={styles.OGPImage} component="img" image={img} title="ogp image" />
-      <CardContent className={styles.Content}>
-        <p>{description}</p>
-      </CardContent>
     </Card>
   );
 };
 
-const LoadingCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
+const LoadingCard: FC<{ title: string, url: string }> = ({ title, url }) => (
   <Card className={styles.Card}>
       <CardHeader
         title={title}
@@ -63,16 +60,13 @@ const LoadingCard: FC<{ title: string, description: string, url: string }> = ({ 
         }
       />
       <p>image loading...</p>
-      <CardContent className={styles.Content}>
-        <p>{description}</p>
-      </CardContent>
     </Card>
 );
 
-const BookmarkCardWithSuspence: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
-  <Suspense fallback={<LoadingCard title={title} description={description} url={url} />}>
-    <BookmarkCard title={title} description={description} url={url}/>
+const PacketCardWithSuspence: FC<{ title: string, url: string }> = ({ title, url }) => (
+  <Suspense fallback={<LoadingCard title={title} url={url} />}>
+    <PacketCard title={title} url={url} />
   </Suspense>
 );
 
-export default BookmarkCardWithSuspence;
+export default PacketCardWithSuspence;
