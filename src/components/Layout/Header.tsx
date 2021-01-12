@@ -21,7 +21,11 @@ const Header: FC = () => {
   return (
     <Toolbar className={styles.Header}>
       <img className={styles.HeaderTitle} src={titleURL} alt="title"></img>
-      {(user === null) ? <StyledButton className={styles.HeaderButton} variant="contained" onClick={login} disableElevation>SIGNIN</StyledButton> : <img className={styles.HeaderIcon} src={user.photoUrl || ""} alt="user-icon"></img>}
+      {
+        (user === null) ? 
+        <StyledButton className={styles.HeaderButton} variant="contained" onClick={login} disableElevation>SIGNIN</StyledButton> : 
+        <img className={styles.HeaderIcon} src={user.photoUrl || ""} alt="user-icon"></img>
+      }
     </Toolbar>
   );
 };
