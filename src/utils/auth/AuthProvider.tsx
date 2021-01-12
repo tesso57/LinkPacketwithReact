@@ -36,6 +36,12 @@ const AuthProvider: React.FC = ({children}) => {
                             photoUrl : user.photoURL
                         }
                         setCurrentUser(initUser)
+
+                        //初期UserをDBにUPLOAD
+                        db.collection('users')
+                            .doc(initUser.id)
+                            .set(initUser)
+                            .catch((err) => alert(err))
                     }
                 }).catch((err) => {
                     alert(err);
