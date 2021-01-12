@@ -1,5 +1,5 @@
 import {firebase} from "../../firebase";
-import {User, URL} from "./index";
+import {URL} from "./index";
 
 export type Packet = {
     id: string;
