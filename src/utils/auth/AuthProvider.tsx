@@ -24,15 +24,15 @@ const AuthProvider: React.FC = ({children}) => {
                 setCurrentUser(user)            
             }
         );
-    })
+    },[])
 
-    const login = async() => {
+    const login = () => {
         const provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().languageCode = 'ja'
         auth.signInWithRedirect(provider);
     }
 
-    const logout = async() => {
+    const logout = () => {
         auth.signOut();
     }
 
