@@ -1,7 +1,7 @@
 import React, { FC, Suspense } from 'react';
 import { Card, CardHeader, CardMedia, CardContent, IconButton } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
-import styles from './PacketCard.module.scss';
+import styles from './BookmarkCard.module.scss';
 
 let imgCache: string | null = null;
 
@@ -26,7 +26,7 @@ const getOGPImage = (url: string) => {
   throw promise;
 }
 
-const PacketCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => {
+const BookmarkCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => {
   const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
   const img = getOGPImage(CORS_PROXY + url); // 'https://qiita.com/ksyunnnn/items/bfe2b9c568e97bb6b494' WIP
 
@@ -50,7 +50,7 @@ const PacketCard: FC<{ title: string, description: string, url: string }> = ({ t
   );
 };
 
-const LodingCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
+const LoadingCard: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
   <Card className={styles.Card}>
       <CardHeader
         title={title}
@@ -69,10 +69,10 @@ const LodingCard: FC<{ title: string, description: string, url: string }> = ({ t
     </Card>
 );
 
-const PacketCardWithSuspence: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
-  <Suspense fallback={<LodingCard title={title} description={description} url={url} />}>
-    <PacketCard title={title} description={description} url={url}/>
+const BookmarkCardWithSuspence: FC<{ title: string, description: string, url: string }> = ({ title, description, url }) => (
+  <Suspense fallback={<LoadingCard title={title} description={description} url={url} />}>
+    <BookmarkCard title={title} description={description} url={url}/>
   </Suspense>
 );
 
-export default PacketCardWithSuspence;
+export default BookmarkCardWithSuspence;
