@@ -40,3 +40,4 @@ firestore.rules
 # Local config/setup
 database.rules.json
 
+.node-version	

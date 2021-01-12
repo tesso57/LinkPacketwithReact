@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
+import { AuthContext } from '../../utils/auth/AuthProvider';
 import { Toolbar, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import styles from './Header.module.scss';
@@ -13,11 +14,17 @@ const StyledButton = withStyles({
   }
 })(Button);
 
-export const Header: FC = () => {
+const Header: FC = () => {
+  const auth = useContext(AuthContext);
+  const user = auth.currentUser;
+  const login = auth.login;
   return (
     <Toolbar className={styles.Header}>
       <img className={styles.HeaderTitle} src={titleURL} alt="title"></img>
-      <StyledButton className={styles.HeaderButton} variant="contained" disableElevation>SIGNIN</StyledButton>
+      {(user === null) ? <StyledButton className={styles.HeaderButton} variant="contained" onClick={login} disableElevation>SIGNIN</StyledButton> : <img className={styles.HeaderIcon} src={user.photoURL || ""} alt="user-icon"></img>}
     </Toolbar>
   );
 };
+
+
+export default Header;
