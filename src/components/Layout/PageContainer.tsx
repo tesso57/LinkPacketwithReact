@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './page-container.module.css'
 
 
-const pageContainer:React.FC = ({children}) => {
+const PageContainer:React.FC = ({children}) => {
     return(
             <main className={styles.container}>
                 {children}
@@ -10,4 +10,4 @@ const pageContainer:React.FC = ({children}) => {
     )
 }
 
-export default pageContainer
+export default PageContainer
