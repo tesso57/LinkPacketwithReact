@@ -13,6 +13,7 @@ const getOGPImage = (url: string) => {
     .then((text) => {
       const el = new DOMParser().parseFromString(text, 'text/html');
       const headEls = el.head.children;
+      // eslint-disable-next-line
       Array.from(headEls).map((v) => {
         const prop = v.getAttribute('property');
           if (prop === 'og:image'){
