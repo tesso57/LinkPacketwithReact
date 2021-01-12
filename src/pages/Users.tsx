@@ -50,7 +50,9 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history,props.match.params.userId])
     return(
-        <></>
+        <div>
+
+        </div>
     )
 }
 

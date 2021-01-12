@@ -34,7 +34,8 @@ const AuthProvider: React.FC = ({children}) => {
                             id : user.uid,
                             packetRefs : [],
                             displayName : user.displayName,
-                            photoUrl : user.photoURL
+                            photoUrl : user.photoURL,
+                            subscribePacketRefs: []
                         }
                         setCurrentUser(initUser)
 
