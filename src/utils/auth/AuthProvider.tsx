@@ -32,6 +32,7 @@ const AuthProvider: React.FC = ({children}) => {
                     }else{
                         const initUser : User = {
                             id : user.uid,
+                            packetRefs : [],
                             displayName : user.displayName,
                             photoUrl : user.photoURL
                         }
