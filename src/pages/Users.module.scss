@@ -1,8 +1,19 @@
 .icon {
-    margin: 0 0 0 auto;
+    display: inline-block;
     width: 12.5rem;
     height: 12.5rem;
     border: solid 1px #000;
     border-radius: 50%;
     object-fit: contain;
+}
+
+.username {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.userContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

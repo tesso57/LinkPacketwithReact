@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { User,Packet } from '../utils/types';
 import styles from './Users.module.scss'
+import pageContainer from '../components/Layout/PageContainer'
+import Header from '../components/Layout/Header'
 
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
@@ -50,17 +52,12 @@ const Users : React.FC<urlProps> = (props) => {
             }
         })
     },[history,props.match.params.userId])
+
     return(
-        <div>
-            <div>
-                {user !== undefined &&
-                    <>
-                        <img className={styles.icon} src={user.photoUrl || ""} alt={'user Icon'}/>
-                        <span>{user.displayName}</span>
-                    </>
-                }
-            </div>
-        </div>
+        <pageContainer>
+        <Header/>
+
+        </pageContainer>
     )
 }
 
