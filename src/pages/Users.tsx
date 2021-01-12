@@ -8,19 +8,21 @@ type urlProps = {} & RouteComponentProps<{userId : string}>;
 
 const Users : React.FC<urlProps> = (props) => {
     const history = useHistory();
+    const [user, setUser] = useState<User | undefined>(undefined);
     const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
     const [subscribePackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
 
     useEffect(() => {
-        //Userを取得
         const docRef = db.collection('users').doc(props.match.params.userId);
         docRef.get().then((doc) => {
             if(doc.exists){
-                const tmp = doc.data() as User
+                //Userを取得
+                const tmpUser = doc.data() as User
+                setUser(tmpUser);
 
                 //自分のPacketを取得
                 let tmpOwnPackets : Packet[] = [];
-                Promise.all(tmp.packetRefs.map(
+                Promise.all(tmpUser.packetRefs.map(
                     async packet => {
                         const packetRef = await packet.get()
                         const packetData = packetRef.data() as Packet
@@ -30,9 +32,9 @@ const Users : React.FC<urlProps> = (props) => {
                     setOwnPackets(tmpOwnPackets)
                 })
 
-                let tmpSubscribePackets : Packet[] = [];
                 //サブスクライブしたPacketを取得
-                Promise.all(tmp.subscribePacketRefs.map(
+                let tmpSubscribePackets : Packet[] = [];
+                Promise.all(tmpUser.subscribePacketRefs.map(
                     async packet => {
                         const packetRef = await packet.get()
                         const packetData = packetRef.data() as Packet
