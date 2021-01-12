@@ -3,14 +3,14 @@ import {RouteComponentProps} from "react-router";
 import {db, firebase} from '../firebase';
 import {Packet, Tag, User} from "../utils/types";
 
-type UrlProps = {} & RouteComponentProps<{ uid: string }>
+type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
 const PacketDetails: React.FC<UrlProps> = (props) => {
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
     useEffect(() => {
         console.log('rendering...');
 //        if (props.match.params.uid === undefined) return;
-        console.log('defined' + props.match.params.uid);
+        console.log('defined' + props.match.params.packetId);
         const docRef = db.collection('packets').doc('QNTSF87b1D3HEfMwhgHk');
         const doc = docRef.get().then(doc => {
             console.log('in doc');
@@ -21,7 +21,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                 console.log("not found");
             }
         })
-    }, [props.match.params.uid]);
+    }, [props.match.params.packetId]);
     return (<>
         <div>
             {packet?.title}
