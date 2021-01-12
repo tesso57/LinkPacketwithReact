@@ -3,8 +3,7 @@ import {Packet} from "./packet";
 
 export type User = {
     id: string;
-    packetRefs: any[];
+    packetRefs: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>[];
     displayName: string | null;
     photoUrl: string | null;
 }
-//firebase.firestore.DocumentReference<Packet>[];

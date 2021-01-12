@@ -1,11 +1,10 @@
 import {firebase} from "../../firebase";
-import {User, Tag} from "./index";
+import {User, URL} from "./index";
 
 export type Packet = {
     id: string;
-    userRef: firebase.firestore.DocumentReference<User>;
-    tagRefs: firebase.firestore.DocumentReference<Tag>[];
+    userRef: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+    urlRefs: URL[];
     title: string;
-    urls: strings[];
     postedDate: Date;
 }
