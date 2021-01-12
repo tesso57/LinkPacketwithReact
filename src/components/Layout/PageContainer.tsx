@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './page-container.module.css'
+import styles from './PageContainer.module.scss'
 
 
 const PageContainer:React.FC = ({children}) => {

@@ -52,6 +52,9 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history,props.match.params.userId])
 
+    console.log(subscribePackets)
+    console.log(ownPackets)
+
     return(
         <PageContainer>
             <div className={styles.userContainer}>
@@ -62,6 +65,7 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                  }
             </div>
+
         </PageContainer>
     )
 }
