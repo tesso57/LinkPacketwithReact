@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth, firebase } from "../../firebase"
+import { auth, db, firebase } from "../../firebase"
 import { User } from '../types'
 
 type Context = {
@@ -23,14 +23,23 @@ const AuthProvider: React.FC = ({children}) => {
     useEffect(() => {
         auth.onAuthStateChanged(
             (user : firebase.User | null) => {
-                if(user !== null){
-                    const tmpUser : User = {
-                        id : user.uid,
-                        displayName : user.displayName,
-                        photoUrl : user.photoURL
+                if(user === null) return
+
+                const docRef = db.collection('users').doc(user.uid);
+                docRef.get().then((doc) => {
+                    if(doc.exists){
+                        setCurrentUser(doc.data() as User)
+                    }else{
+                        const initUser : User = {
+                            id : user.uid,
+                            displayName : user.displayName,
+                            photoUrl : user.photoURL
+                        }
+                        setCurrentUser(initUser)
                     }
-                    setCurrentUser(tmpUser)            
-                }
+                }).catch((err) => {
+                    alert(err);
+                })                
             }
         );
     },[])
