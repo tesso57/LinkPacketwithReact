@@ -6,6 +6,7 @@ import { User,Packet } from '../utils/types';
 import styles from './Users.module.scss'
 import pageContainer from '../components/Layout/PageContainer'
 import Header from '../components/Layout/Header'
+import {AuthProvider} from '../utils/auth/AuthProvider'
 
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
@@ -54,10 +55,22 @@ const Users : React.FC<urlProps> = (props) => {
     },[history,props.match.params.userId])
 
     return(
-        <pageContainer>
-        <Header/>
-
-        </pageContainer>
+        <AuthProvider>
+            <pageContainer>
+                
+            </pageContainer>
+        </AuthProvider>
+        // <pageContainer>
+        // <Header/>
+        // {/* <div className={styles.userContainer}>
+        //             {user !== undefined &&
+        //                 <>
+        //                     <img className={styles.icon} src={user.photoUrl || ""} alt={'user Icon'}/>
+        //                     <span className={styles.username}>{user.displayName}</span>
+        //                 </>
+        //             }
+        //         </div> */}
+        // </pageContainer>
     )
 }
 
