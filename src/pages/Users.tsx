@@ -8,7 +8,8 @@ type urlProps = {} & RouteComponentProps<{userId : string}>;
 
 const Users : React.FC<urlProps> = (props) => {
     const history = useHistory();
-    const [packets, setPackets] = useState<Packet[] | undefined>(undefined);
+    const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
+    const [subscribedPackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
 
     useEffect(() => {
         //Userを取得
@@ -25,7 +26,7 @@ const Users : React.FC<urlProps> = (props) => {
                         tmpPackets.push(packetData)
                     }
                 )).then(() => {
-                    setPackets(tmpPackets)
+                    setOwnPackets(tmpPackets)
                 })
             }else{
                 history.push('/')
