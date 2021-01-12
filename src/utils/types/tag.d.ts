@@ -1,9 +1,7 @@
-import { firebase } from "../../firebase"
+import {firebase} from "../../firebase";
 import {Packet} from "./packet";
-
-export type User = {
+export type Tag = {
     id: string;
+    name: string;
     packetRefs: firebase.firestore.DocumentReference<Packet>[];
-    displayName: string;
-    photoUrl: string;
 }

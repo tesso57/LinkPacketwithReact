@@ -1,4 +1,5 @@
-import { User } from './user'
-import { Packet } from './packet'
+import {User} from './user'
+import {Packet} from './packet'
+import {Tag} from "./tag"
 
-export {User, Packet}
+export {User, Packet, Tag}
