@@ -29,7 +29,7 @@ const AuthProvider: React.FC = ({children}) => {
                         displayName : user.displayName,
                         photoUrl : user.photoURL
                     }
-                    setCurrentUser(user)            
+                    setCurrentUser(tmpUser)            
                 }
             }
         );
