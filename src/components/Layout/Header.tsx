@@ -14,12 +14,10 @@ const StyledButton = withStyles({
   }
 })(Button);
 
-export const Header: FC = () => {
+const Header: FC = () => {
   const auth = useContext(AuthContext);
   const user = auth.currentUser;
   const login = auth.login;
-
-const Header: FC = () => {
   return (
     <Toolbar className={styles.Header}>
       <img className={styles.HeaderTitle} src={titleURL} alt="title"></img>
