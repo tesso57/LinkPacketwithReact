@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { auth, firebase } from "../../firebase"
+import { auth, db, firebase } from "../../firebase"
+import { User } from '../types'
 
 type Context = {
 
     login : () => void
     logout : () => void
-    currentUser : firebase.User | null
+    currentUser : User | null
 
 }
 
@@ -17,11 +18,35 @@ const AuthContext = React.createContext<Context>({
 })
 
 const AuthProvider: React.FC = ({children}) => {
-    const [currentUser, setCurrentUser] = useState<null | firebase.User>(null)
+    const [currentUser, setCurrentUser] = useState<null | User>(null)
 
     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-                setCurrentUser(user)            
+        auth.onAuthStateChanged(
+            (user : firebase.User | null) => {
+                if(user === null) return
+
+                const docRef = db.collection('users').doc(user.uid);
+                docRef.get().then((doc) => {
+                    if(doc.exists){
+                        setCurrentUser(doc.data() as User)
+                    }else{
+                        const initUser : User = {
+                            id : user.uid,
+                            packetRefs : [],
+                            displayName : user.displayName,
+                            photoUrl : user.photoURL
+                        }
+                        setCurrentUser(initUser)
+
+                        //初期UserをDBにUPLOAD
+                        db.collection('users')
+                            .doc(initUser.id)
+                            .set(initUser)
+                            .catch((err) => alert(err))
+                    }
+                }).catch((err) => {
+                    alert(err);
+                })                
             }
         );
     },[])
