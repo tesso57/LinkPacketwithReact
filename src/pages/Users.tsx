@@ -66,12 +66,12 @@ const Users : React.FC<urlProps> = (props) => {
                  }
             </div>
             <div>
-                <p>自分のパケット</p>
+                <h1 className={styles.title}>自分のパケット</h1>
                 {
                     ownPackets !== undefined &&
                     <PacketCardList packets={ownPackets}/>
                 }
-                <p>いいねしたパケット</p>
+                <h1 className={styles.title}>いいねしたパケット</h1>
                 {
                     subscribePackets !== undefined &&
                     <PacketCardList packets={subscribePackets}/>

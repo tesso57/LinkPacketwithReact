@@ -1,18 +1,25 @@
+@import '../styles/common.scss';
+
 .icon {
-    display: inline-block;
     width: 8rem;
     height: 8rem;
-    border: solid 1px #000;
+    border: solid 1px $color-gray;
     border-radius: 50%;
     object-fit: contain;
     margin-right: 4rem;
 }
 
 .username {
-    display: inline-block;
-    vertical-align: middle;
     font-size : 24px;
-    margin-left: 4rem
+    margin-left: 4rem;
+    font-weight: bold;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 4rem 2rem 2rem;
+    color: $color-secondary;
 }
 
 .userContainer {
