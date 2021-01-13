@@ -1,5 +1,10 @@
 .Container {
   display: flex;
   flex-direction: column;
-  gap: 1rem
+  gap: 1rem;
+}
+
+.TextField {
+  width: 70%;
+  margin: 0 auto;
 }
