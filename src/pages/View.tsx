@@ -7,8 +7,6 @@ import PacketCardList from "../components/PacketCardList";
 
 const View: React.FC = () => {
     const [packets, setPackets] = useState<Packet[] | undefined>(undefined);
-    const japaneseDateStringFromDate = (date: Date) =>
-        `${date.getMonth() + 1}月${date.getDate()}日`;
 
     useEffect(() => {
         const tempPackets = new Array<Packet>();
