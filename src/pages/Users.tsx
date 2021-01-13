@@ -77,9 +77,10 @@ const Users : React.FC<urlProps> = (props) => {
             title: '無題のパケット',
             postedDate: firebase.firestore.FieldValue.serverTimestamp()
         }
+        
         db.collection('packets').add(initPacketData).then((docRef) => {
             //userをupdate
-            const packetRef = db.collection('packsts').doc(docRef.id);
+            const packetRef = db.collection('packcets').doc(docRef.id);
             currentUserRef.update({
                 packetRefs : [...currentUser.packetRefs, packetRef]
             })
@@ -118,9 +119,7 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                 }
                 { nonOwnPacketFlag &&
-                    <>
                         <h2 className={styles.tips}>パケットを作成しましょう！</h2>
-                    </>
                 }
                     
                 {
