@@ -6,7 +6,11 @@ import NotFound from './pages/NotFound';
 import User from './pages/Users';
 import PacketDetails from './pages/PacketDetails';
 import Create from './pages/Create';
+
+import Packet from './pages/Packet';
+
 import View from './pages/View';
+import Edit from './pages/Edit';
 
 const App: React.FC = () => {
   return (
@@ -15,9 +19,9 @@ const App: React.FC = () => {
         <Header />
         <Switch>
           <Route path={'/users/:userId'} component={User} />
-          <Route path={'/packet/:packetId'} component={PacketDetails} />
-          <Route path={'/create'} component={Create} />
-          <Route path={'/view'} component={View} />
+          <Route path={'/packet/:packetId'} component={Packet} />
+          <Route path={'/edit/:packetId'} component={Edit} />
+          <Route path={'/'} component={View} />
           <Route component={NotFound} />
         </Switch>
       </Router>

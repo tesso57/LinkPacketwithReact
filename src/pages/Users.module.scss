@@ -1,0 +1,41 @@
+@import '../styles/common.scss';
+
+.icon {
+    width: 8rem;
+    height: 8rem;
+    border: solid 1px $color-gray;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.username {
+    font-size : 24px;
+    font-weight: bold;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 4rem 2rem 2rem;
+    color: $color-secondary;
+}
+
+.userContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+
+    margin-top:2rem;
+    margin-bottom:2rem;
+}
+
+.tips {
+    text-align: center;
+}
+
+.createButton {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+}
