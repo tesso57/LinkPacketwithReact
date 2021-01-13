@@ -114,7 +114,7 @@ const Users : React.FC<urlProps> = (props) => {
                 {
                     ownPackets !== undefined &&
                     <>
-                        <h1 className={styles.title}>自分のパケット</h1>
+                        <h1 className={styles.title}>パケット</h1>
                         <PacketCardList packets={ownPackets}/>
                     </>
                 }
@@ -125,7 +125,7 @@ const Users : React.FC<urlProps> = (props) => {
                 {
                     (subscribePackets !== undefined && !nonSubscribePacketFlag) &&
                     <>
-                        <h1 className={styles.title}>いいねしたパケット</h1>
+                        <h1 className={styles.title}>リンクしたパケット</h1>
                         <PacketCardList packets={subscribePackets}/>
                     </>
                 }
