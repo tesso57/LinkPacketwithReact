@@ -1,5 +1,13 @@
 import React, {FC, Suspense, useEffect, useState} from 'react';
-import {Button, Card, CardActionArea, CardHeader, IconButton} from '@material-ui/core';
+import {
+    Card,
+    CardActionArea,
+    CardActions,
+    CardContent,
+    CardHeader,
+    Container,
+    IconButton
+} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import {Packet} from '../utils/types';
 import styles from './PacketCard.module.scss';
@@ -35,22 +43,24 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
     }, [history]);
     return (
         <Card className={styles.Card}>
-            <CardActionArea component="div" disableRipple>
-                <Button onClick={() => history.push(`/packet/${packet.id}`)}>
-                    <CardHeader
-                        title={packet.title}
-                        action={
-                            <ShareIcon onClick={onClickShareButton(packet.id)}/>
-                        }
-                    />
-                </Button>
+            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
+                <CardHeader
+                    title={packet.title}
+                />
+                <CardContent>
+                    {
+                        faviconUrls?.map((url, i) => (
+                                <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
+                            )
+                        )
+                    }
+                </CardContent>
             </CardActionArea>
-            {
-                faviconUrls?.map((url, i) => (
-                        <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
-                    )
-                )
-            }
+            <CardActions disableSpacing>
+                <IconButton className={styles.IconButtonPosition} onClick={onClickShareButton(packet.id)}>
+                    <ShareIcon/>
+                </IconButton>
+            </CardActions>
         </Card>
     );
 };
@@ -69,9 +79,11 @@ const LoadingCard: FC<{ packet: Packet }> = ({packet}) => (
 );
 
 const PacketCardWithSuspence: FC<{ packet: Packet }> = ({packet}) => (
-    <Suspense fallback={<LoadingCard packet={packet}/>}>
-        <PacketCard packet={packet}/>
-    </Suspense>
+    <Container maxWidth={'md'}>
+        <Suspense fallback={<LoadingCard packet={packet}/>}>
+            <PacketCard packet={packet}/>
+        </Suspense>
+    </Container>
 );
 
 export default PacketCardWithSuspence;
