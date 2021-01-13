@@ -8,9 +8,11 @@ import {useHistory} from "react-router-dom";
 
 type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
+const onClickItem = (link: string) => () => window.location.replace(link);
+
 const PacketDetails: React.FC<UrlProps> = (props) => {
-    const history = useHistory();
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
+    const history = useHistory();
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
         const docRef = db.collection('packets').doc(props.match.params.packetId);
@@ -19,12 +21,10 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                 console.log(doc.data());
                 setPacket(doc.data() as Packet)
             } else {
-                history.push('/');
+                history.push('/')
             }
         })
-    }, [props.match.params.packetId]);
-
-    const onClickItem = (link: string) => () => window.location.replace(link);
+    }, [props.match.params.packetId, history]);
 
     return (<>
         <Container maxWidth={"md"}>
@@ -43,6 +43,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                     ))
                 }
             </List>
+            {/*<Button variant={"contained"}>hoge</Button>*/}
         </Container>
     </>)
 };
