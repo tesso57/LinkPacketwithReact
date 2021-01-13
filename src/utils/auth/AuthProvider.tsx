@@ -24,7 +24,6 @@ const AuthProvider: React.FC = ({children}) => {
         auth.onAuthStateChanged(
             (user : firebase.User | null) => {
                 if(user === null) return
-
                 const docRef = db.collection('users').doc(user.uid);
                 docRef.get().then((doc) => {
                     if(doc.exists){

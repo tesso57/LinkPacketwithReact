@@ -1,8 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { AuthProvider } from './utils/auth/AuthProvider';
 import Header from "./components/Layout/Header";
-import NotFound from './pages/NotFound';
 import User from './pages/Users';
 import PacketDetails from './pages/PacketDetails';
 import Create from './pages/Create';
@@ -14,11 +13,11 @@ const App: React.FC = () => {
       <Router>
         <Header />
         <Switch>
-          <Route path={'/users/:userId'} component={User} />
-          <Route path={'/packet/:packetId'} component={PacketDetails} />
-          <Route path={'/create'} component={Create} />
-          <Route path={'/'} component={View} />
-          <Route component={NotFound} />
+          <Route exact path={'/users/:userId'} component={User} />
+          <Route exact path={'/packet/:packetId'} component={PacketDetails} />
+          <Route exact path={'/create'} component={Create} />
+          <Route exact path={'/'} component={View} />
+          <Redirect to={''}/>
         </Switch>
       </Router>
     </AuthProvider>
