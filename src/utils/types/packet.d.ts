@@ -8,5 +8,5 @@ export type Packet = {
     userRef: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
     urls: URL[];
     title: string;
-    postedDate: Timestamp;
+    postedDate: firebase.firestore.FieldValue;
 }
