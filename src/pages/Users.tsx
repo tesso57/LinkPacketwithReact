@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
-import { db } from "../firebase";
+import { db, firebase } from "../firebase";
 import { User,Packet } from '../utils/types';
+import { AuthContext } from '../utils/auth/AuthProvider'
 import styles from './Users.module.scss'
 import PageContainer from '../components/Layout/PageContainer'
 import PacketCardList from '../components/PacketCardList';
@@ -12,12 +13,15 @@ import AddIcon from '@material-ui/icons/Add';
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
 const Users : React.FC<urlProps> = (props) => {
+    const {currentUser,setCurrentUser, currentUserRef} = useContext(AuthContext);
     const history = useHistory();
     const [user, setUser] = useState<User | undefined>(undefined);
     const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
     const [subscribePackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
     const [nonOwnPacketFlag, setNonOwnPacketFlag] = useState<boolean>(false);
     const [nonSubscribePacketFlag, setNonSubscribePacketFlag] = useState<boolean>(false);
+
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     useEffect(() => {
         const docRef = db.collection('users').doc(props.match.params.userId);
@@ -62,9 +66,46 @@ const Users : React.FC<urlProps> = (props) => {
             }
         })
     },[history, props.match.params.userId])
-    // useCallBack(() => {
-        
-    // },[])
+
+    useCallback(() => {
+        //新規bookmarkを発行
+        if (currentUserRef === undefined) return
+        const packetId = Math.random().toString(32).substring(2);
+        const initPacketData : Packet = {
+            id : packetId,
+            userRef : currentUserRef,
+            urls: [],
+            title: '無題のパケット',
+            postedDate: firebase.firestore.FieldValue.serverTimestamp()
+        }
+        const packetRef = db.collection('packets').doc(packetId)
+        packetRef.set(initPacketData)
+
+        currentUserRef.get().then((doc) => {
+            if(doc.exists){
+            //user をupdate
+            const user = doc.data() as User;
+            currentUserRef.update({
+            packetRefs : [...user.packetRefs, packetRef]
+                })
+            setUpdateFlag(true)
+            }
+        }).catch((err) => {
+            alert(err);
+        }) 
+
+    },[currentUserRef])
+
+    useEffect(() => {
+        if(currentUserRef === undefined || setCurrentUser === undefined) return
+        currentUserRef.get().then((doc) => {
+            if(doc.exists)
+                setCurrentUser(doc.data() as User)
+        }).catch((err) => {
+            alert(err);
+        })                
+    }
+    ,[currentUserRef,setCurrentUser,updateFlag])
 
     return(
         <PageContainer>
