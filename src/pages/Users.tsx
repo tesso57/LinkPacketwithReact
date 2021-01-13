@@ -67,45 +67,45 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history, props.match.params.userId])
 
-    useCallback(() => {
-        //新規bookmarkを発行
-        if (currentUserRef === undefined) return
-        const packetId = Math.random().toString(32).substring(2);
-        const initPacketData : Packet = {
-            id : packetId,
-            userRef : currentUserRef,
-            urls: [],
-            title: '無題のパケット',
-            postedDate: firebase.firestore.FieldValue.serverTimestamp()
-        }
-        const packetRef = db.collection('packets').doc(packetId)
-        packetRef.set(initPacketData)
+    // useCallback(() => {
+    //     //新規bookmarkを発行
+    //     if (currentUserRef === undefined) return
+    //     const packetId = Math.random().toString(32).substring(2);
+    //     const initPacketData : Packet = {
+    //         id : packetId,
+    //         userRef : currentUserRef,
+    //         urls: [],
+    //         title: '無題のパケット',
+    //         postedDate: firebase.firestore.FieldValue.serverTimestamp()
+    //     }
+    //     const packetRef = db.collection('packets').doc(packetId)
+    //     packetRef.set(initPacketData)
 
-        currentUserRef.get().then((doc) => {
-            if(doc.exists){
-            //user をupdate
-            const user = doc.data() as User;
-            currentUserRef.update({
-            packetRefs : [...user.packetRefs, packetRef]
-                })
-            setUpdateFlag(true)
-            }
-        }).catch((err) => {
-            alert(err);
-        }) 
+    //     currentUserRef.get().then((doc) => {
+    //         if(doc.exists){
+    //         //user をupdate
+    //         const user = doc.data() as User;
+    //         currentUserRef.update({
+    //         packetRefs : [...user.packetRefs, packetRef]
+    //             })
+    //         setUpdateFlag(true)
+    //         }
+    //     }).catch((err) => {
+    //         alert(err);
+    //     }) 
 
-    },[currentUserRef])
+    // },[currentUserRef])
 
-    useEffect(() => {
-        if(currentUserRef === undefined || setCurrentUser === undefined) return
-        currentUserRef.get().then((doc) => {
-            if(doc.exists)
-                setCurrentUser(doc.data() as User)
-        }).catch((err) => {
-            alert(err);
-        })                
-    }
-    ,[currentUserRef,setCurrentUser,updateFlag])
+    // useEffect(() => {
+    //     if(currentUserRef === undefined || setCurrentUser === undefined) return
+    //     currentUserRef.get().then((doc) => {
+    //         if(doc.exists)
+    //             setCurrentUser(doc.data() as User)
+    //     }).catch((err) => {
+    //         alert(err);
+    //     })                
+    // }
+    // ,[currentUserRef,setCurrentUser,updateFlag])
 
     return(
         <PageContainer>
