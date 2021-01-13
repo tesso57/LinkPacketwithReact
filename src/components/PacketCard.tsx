@@ -1,7 +1,9 @@
 import React, { FC, Suspense } from 'react';
-import { Card, CardHeader, CardMedia, IconButton } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardMedia, IconButton, CardActionArea } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
-import styles from './BookmarkCard.module.scss';
+import { Packet } from '../utils/types/packet';
+import styles from './PacketCard.module.scss';
 
 let imgCache: string | null = null;
 
@@ -26,34 +28,38 @@ const getOGPImage = (url: string) => {
   throw promise;
 }
 
-const PacketCard: FC<{ title: string, url: string }> = ({ title, url }) => {
+const PacketCard: FC<{ packet: Packet }> = ({ packet }) => {
   const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-  const img = getOGPImage(CORS_PROXY + url); // 'https://qiita.com/ksyunnnn/items/bfe2b9c568e97bb6b494' WIP
+  const img = getOGPImage(CORS_PROXY + packet.urls[0].link); // 'https://qiita.com/ksyunnnn/items/bfe2b9c568e97bb6b494' WIP
 
   return (
     <Card className={styles.Card}>
-      <CardHeader
-        title={title}
-        action={
-          <IconButton>
-            <a href={url}>
-              <ShareIcon />
-            </a>
-          </IconButton>
-        }
-      />
-      <CardMedia className={styles.OGPImage} component="img" image={img} title="ogp image" />
+      <CardActionArea component="div" disableRipple>
+        <Link to={"/packet/" + packet.id}>
+          <CardHeader
+            title={packet.title}
+            action={
+              <IconButton>
+                <a href="//twitter.com/share" data-url={"/packet/" + packet.id} data-lang="ja">
+                  <ShareIcon />
+                </a>
+              </IconButton>
+            }
+          />
+          <CardMedia className={styles.OGPImage} component="img" image={img} title="ogp image" />
+        </Link>
+      </CardActionArea>
     </Card>
   );
 };
 
-const LoadingCard: FC<{ title: string, url: string }> = ({ title, url }) => (
+const LoadingCard: FC<{ packet: Packet }> = ({ packet }) => (
   <Card className={styles.Card}>
       <CardHeader
-        title={title}
+        title={packet.title}
         action={
           <IconButton>
-            <a href={url}>
+            <a href="//twitter.com/share" data-url={"/packet/" + packet.id} data-lang="ja">
               <ShareIcon />
             </a>
           </IconButton>
@@ -63,9 +69,9 @@ const LoadingCard: FC<{ title: string, url: string }> = ({ title, url }) => (
     </Card>
 );
 
-const PacketCardWithSuspence: FC<{ title: string, url: string }> = ({ title, url }) => (
-  <Suspense fallback={<LoadingCard title={title} url={url} />}>
-    <PacketCard title={title} url={url} />
+const PacketCardWithSuspence: FC<{ packet: Packet }> = ({ packet }) => (
+  <Suspense fallback={<LoadingCard packet={packet} />}>
+    <PacketCard packet={packet} />
   </Suspense>
 );
 
