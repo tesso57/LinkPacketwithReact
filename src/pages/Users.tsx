@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { db, firebase } from "../firebase";
@@ -20,8 +20,6 @@ const Users : React.FC<urlProps> = (props) => {
     const [subscribePackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
     const [nonOwnPacketFlag, setNonOwnPacketFlag] = useState<boolean>(false);
     const [nonSubscribePacketFlag, setNonSubscribePacketFlag] = useState<boolean>(false);
-
-    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     useEffect(() => {
         const docRef = db.collection('users').doc(props.match.params.userId);
@@ -67,45 +65,39 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history, props.match.params.userId])
 
-    // useCallback(() => {
-    //     //新規bookmarkを発行
-    //     if (currentUserRef === undefined) return
-    //     const packetId = Math.random().toString(32).substring(2);
-    //     const initPacketData : Packet = {
-    //         id : packetId,
-    //         userRef : currentUserRef,
-    //         urls: [],
-    //         title: '無題のパケット',
-    //         postedDate: firebase.firestore.FieldValue.serverTimestamp()
-    //     }
-    //     const packetRef = db.collection('packets').doc(packetId)
-    //     packetRef.set(initPacketData)
-
-    //     currentUserRef.get().then((doc) => {
-    //         if(doc.exists){
-    //         //user をupdate
-    //         const user = doc.data() as User;
-    //         currentUserRef.update({
-    //         packetRefs : [...user.packetRefs, packetRef]
-    //             })
-    //         setUpdateFlag(true)
-    //         }
-    //     }).catch((err) => {
-    //         alert(err);
-    //     }) 
-
-    // },[currentUserRef])
-
-    // useEffect(() => {
-    //     if(currentUserRef === undefined || setCurrentUser === undefined) return
-    //     currentUserRef.get().then((doc) => {
-    //         if(doc.exists)
-    //             setCurrentUser(doc.data() as User)
-    //     }).catch((err) => {
-    //         alert(err);
-    //     })                
-    // }
-    // ,[currentUserRef,setCurrentUser,updateFlag])
+    const createButton = () => {
+        console.log('render');
+        //新規bookmarkを発行
+        if (currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return
+        //packetDataを新既発行
+        const initPacketData : Packet = {
+            id : '',
+            userRef : currentUserRef,
+            urls: [],
+            title: '無題のパケット',
+            postedDate: firebase.firestore.FieldValue.serverTimestamp()
+        }
+        db.collection('packets').add(initPacketData).then((docRef) => {
+            //userをupdate
+            const packetRef = db.collection('packsts').doc(docRef.id);
+            currentUserRef.update({
+                packetRefs : [...currentUser.packetRefs, packetRef]
+            })
+            //dbをupdate
+            db.collection('packets').doc(docRef.id).update({
+                id : docRef.id
+            })
+            const newCurrentUser: User = {
+                id : currentUser.id,
+                packetRefs : [...currentUser.packetRefs,packetRef],
+                subscribePacketRefs: currentUser.subscribePacketRefs,
+                displayName: currentUser.displayName,
+                photoUrl: currentUser.photoUrl
+            }
+            setCurrentUser(newCurrentUser);
+            history.push(`/edit/${docRef.id}`)
+        })
+    }
 
     return(
         <PageContainer>
@@ -140,7 +132,7 @@ const Users : React.FC<urlProps> = (props) => {
                 }
             </div>
             <div className={styles.createButton}>
-                <IconButton >
+                <IconButton onClick={createButton}>
                     <AddIcon style={{ fontSize: 100,color:`#fff`,backgroundColor:`#F6B40D`,borderRadius:`50%`}} />
                 </IconButton>
             </div>
