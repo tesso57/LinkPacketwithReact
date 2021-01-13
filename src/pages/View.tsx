@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Packet} from "../utils/types";
 import {db} from "../firebase";
-import {Container, List, ListItem, ListItemText, Paper} from "@material-ui/core";
-import styles from "./PacketDetails.module.scss";
+import {Container} from "@material-ui/core";
 import PacketCardList from "../components/PacketCardList";
 
 
