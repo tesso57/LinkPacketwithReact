@@ -62,7 +62,9 @@ const Users : React.FC<urlProps> = (props) => {
             }
         })
     },[history, props.match.params.userId])
-
+    // useCallBack(() => {
+        
+    // },[])
 
     return(
         <PageContainer>
