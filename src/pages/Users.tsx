@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
-import { db } from "../firebase";
+import { db, firebase } from "../firebase";
 import { User,Packet } from '../utils/types';
-
+import { AuthContext } from '../utils/auth/AuthProvider'
 import styles from './Users.module.scss'
 import PageContainer from '../components/Layout/PageContainer'
 import PacketCardList from '../components/PacketCardList';
@@ -13,6 +13,7 @@ import AddIcon from '@material-ui/icons/Add';
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
 const Users : React.FC<urlProps> = (props) => {
+    const {currentUser,setCurrentUser, currentUserRef} = useContext(AuthContext);
     const history = useHistory();
     const [user, setUser] = useState<User | undefined>(undefined);
     const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
@@ -63,9 +64,41 @@ const Users : React.FC<urlProps> = (props) => {
             }
         })
     },[history, props.match.params.userId])
-    // useCallBack(() => {
+
+    const createButton = () => {
+        console.log('render');
+        //新規bookmarkを発行
+        if (currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return
+        //packetDataを新既発行
+        const initPacketData : Packet = {
+            id : '',
+            userRef : currentUserRef,
+            urls: [],
+            title: '無題のパケット',
+            postedDate: firebase.firestore.FieldValue.serverTimestamp()
+        }
         
-    // },[])
+        db.collection('packets').add(initPacketData).then((docRef) => {
+            //userをupdate
+            const packetRef = db.collection('packcets').doc(docRef.id);
+            currentUserRef.update({
+                packetRefs : [...currentUser.packetRefs, packetRef]
+            })
+            //dbをupdate
+            db.collection('packets').doc(docRef.id).update({
+                id : docRef.id
+            })
+            const newCurrentUser: User = {
+                id : currentUser.id,
+                packetRefs : [...currentUser.packetRefs,packetRef],
+                subscribePacketRefs: currentUser.subscribePacketRefs,
+                displayName: currentUser.displayName,
+                photoUrl: currentUser.photoUrl
+            }
+            setCurrentUser(newCurrentUser);
+            history.push(`/edit/${docRef.id}`)
+        })
+    }
 
     return(
         <PageContainer>
@@ -86,9 +119,7 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                 }
                 { nonOwnPacketFlag &&
-                    <>
                         <h2 className={styles.tips}>パケットを作成しましょう！</h2>
-                    </>
                 }
                     
                 {
@@ -100,7 +131,7 @@ const Users : React.FC<urlProps> = (props) => {
                 }
             </div>
             <div className={styles.createButton}>
-                <IconButton >
+                <IconButton onClick={createButton}>
                     <AddIcon style={{ fontSize: 100,color:`#fff`,backgroundColor:`#F6B40D`,borderRadius:`50%`}} />
                 </IconButton>
             </div>

@@ -8,13 +8,15 @@ type Context = {
     logout : () => void
     currentUser : User | null
     currentUserRef :  firebase.firestore.DocumentReference<firebase.firestore.DocumentData> | undefined
+    setCurrentUser : React.Dispatch<React.SetStateAction<User | null>> | undefined
 }
 
 const AuthContext = React.createContext<Context>({
     login: async () => {},
     logout: async () => {},
-    currentUser: null,
-    currentUserRef: undefined
+    currentUser : null,
+    currentUserRef : undefined,
+    setCurrentUser : undefined
 })
 
 const AuthProvider: React.FC = ({children}) => {
@@ -64,7 +66,7 @@ const AuthProvider: React.FC = ({children}) => {
     }
 
     return(
-        <AuthContext.Provider value={{ logout, login, currentUser, currentUserRef }}>
+        <AuthContext.Provider value={{ logout, login, currentUser, currentUserRef,setCurrentUser }}>
             {children}
         </AuthContext.Provider>
     )
