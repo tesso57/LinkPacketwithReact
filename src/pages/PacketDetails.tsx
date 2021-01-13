@@ -4,10 +4,12 @@ import {db} from '../firebase';
 import {Packet} from "../utils/types";
 import { Container, List, ListItem, ListItemText, Paper} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
+import {useHistory} from "react-router-dom";
 
 type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
 const PacketDetails: React.FC<UrlProps> = (props) => {
+    const history = useHistory();
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
@@ -17,7 +19,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                 console.log(doc.data());
                 setPacket(doc.data() as Packet)
             } else {
-                console.log("not found");
+                history.push('/');
             }
         })
     }, [props.match.params.packetId]);
