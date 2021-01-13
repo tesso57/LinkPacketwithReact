@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {RouteComponentProps} from "react-router";
-import {db, firebase} from '../firebase';
-import {Packet, User} from "../utils/types";
-import {Button, Container, Icon, List, ListItem, ListItemText, Paper} from "@material-ui/core";
-import {inspect} from "util";
+import {db} from '../firebase';
+import {Packet} from "../utils/types";
+import { Container, List, ListItem, ListItemText, Paper} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
 
 type UrlProps = {} & RouteComponentProps<{ packetId: string }>
