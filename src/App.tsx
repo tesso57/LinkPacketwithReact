@@ -17,7 +17,7 @@ const App: React.FC = () => {
           <Route path={'/users/:userId'} component={User} />
           <Route path={'/packet/:packetId'} component={Packet} />
           <Route path={'/edit/:packetId'} component={EditPacket} />
-          <Route path={'view'} component={View} />
+          <Route path={'/view'} component={View} />
           <Route path={'/'} component={View} />
           <Route component={NotFound} />
         </Switch>
