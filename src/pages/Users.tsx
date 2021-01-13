@@ -6,6 +6,8 @@ import { User,Packet } from '../utils/types';
 import styles from './Users.module.scss'
 import PageContainer from '../components/Layout/PageContainer'
 import PacketCardList from '../components/PacketCardList';
+import IconButton from '@material-ui/core/IconButton';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
@@ -14,6 +16,8 @@ const Users : React.FC<urlProps> = (props) => {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [ownPackets, setOwnPackets] = useState<Packet[] | undefined>(undefined);
     const [subscribePackets, setSubscribePackets] = useState<Packet[] | undefined>(undefined);
+    const [nonOwnPacketFlag, setNonOwnPacketFlag] = useState<boolean>(false);
+    const [nonSubscribePacketFlag, setNonSubscribePacketFlag] = useState<boolean>(false);
 
     useEffect(() => {
         const docRef = db.collection('users').doc(props.match.params.userId);
@@ -33,6 +37,9 @@ const Users : React.FC<urlProps> = (props) => {
                     }
                 )).then(() => {
                     setOwnPackets(tmpOwnPackets)
+                    if(tmpOwnPackets.length === 0){
+                        setNonOwnPacketFlag(true)
+                    }
                 })
 
                 //サブスクライブしたPacketを取得
@@ -45,6 +52,9 @@ const Users : React.FC<urlProps> = (props) => {
                     }
                 )).then(() => {
                     setSubscribePackets(tmpSubscribePackets)
+                    if(tmpSubscribePackets.length === 0){
+                        setNonSubscribePacketFlag(true)
+                    }
                 })
 
             }else{
@@ -53,7 +63,6 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history, props.match.params.userId])
 
-    console.log(ownPackets)
 
     return(
         <PageContainer>
@@ -66,17 +75,30 @@ const Users : React.FC<urlProps> = (props) => {
                  }
             </div>
             <div>
-                <h1 className={styles.title}>自分のパケット</h1>
                 {
                     ownPackets !== undefined &&
-                    <PacketCardList packets={ownPackets}/>
+                    <>
+                        <h1 className={styles.title}>自分のパケット</h1>
+                        <PacketCardList packets={ownPackets}/>
+                    </>
                 }
-                <h1 className={styles.title}>いいねしたパケット</h1>
+                { nonOwnPacketFlag &&
+                    <>
+                        <h2 className={styles.tips}>パケットを作成しましょう！</h2>
+                    </>
+                }
+                    
                 {
-                    subscribePackets !== undefined &&
-                    <PacketCardList packets={subscribePackets}/>
+                    (subscribePackets !== undefined && !nonSubscribePacketFlag) &&
+                    <>
+                        <h1 className={styles.title}>いいねしたパケット</h1>
+                        <PacketCardList packets={subscribePackets}/>
+                    </>
                 }
             </div>
+            <IconButton >
+                <AddCircleIcon style={{ fontSize: 100,color: `#F6B40D`}} />
+            </IconButton>
         </PageContainer>
     )
 }
