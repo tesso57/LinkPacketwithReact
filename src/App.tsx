@@ -6,6 +6,7 @@ import User from './pages/Users';
 import PacketDetails from './pages/PacketDetails';
 import Create from './pages/Create';
 import View from './pages/View';
+import Edit from './pages/Edit';
 
 const App: React.FC = () => {
   return (

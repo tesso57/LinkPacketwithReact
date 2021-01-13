@@ -7,24 +7,26 @@ type Context = {
     login : () => void
     logout : () => void
     currentUser : User | null
-
+    currentUserRef :  firebase.firestore.DocumentReference<firebase.firestore.DocumentData> | undefined
 }
 
 const AuthContext = React.createContext<Context>({
     login: async () => {},
     logout: async () => {},
-    currentUser: null
-
+    currentUser: null,
+    currentUserRef: undefined
 })
 
 const AuthProvider: React.FC = ({children}) => {
     const [currentUser, setCurrentUser] = useState<null | User>(null)
+    const [currentUserRef, setCurrentUserRef] = useState<undefined | firebase.firestore.DocumentReference<firebase.firestore.DocumentData>>(undefined)
 
     useEffect(() => {
         auth.onAuthStateChanged(
             (user : firebase.User | null) => {
                 if(user === null) return
                 const docRef = db.collection('users').doc(user.uid);
+                setCurrentUserRef(docRef);
                 docRef.get().then((doc) => {
                     if(doc.exists){
                         setCurrentUser(doc.data() as User)
@@ -62,7 +64,7 @@ const AuthProvider: React.FC = ({children}) => {
     }
 
     return(
-        <AuthContext.Provider value={{ logout, login, currentUser }}>
+        <AuthContext.Provider value={{ logout, login, currentUser, currentUserRef }}>
             {children}
         </AuthContext.Provider>
     )
