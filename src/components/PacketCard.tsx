@@ -1,7 +1,7 @@
 import React, { FC, Suspense } from 'react';
 import { Card, CardHeader, CardMedia, IconButton } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
-import styles from './BookmarkCard.module.scss';
+import styles from './PacketCard.module.scss';
 
 let imgCache: string | null = null;
 

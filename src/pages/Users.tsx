@@ -5,6 +5,7 @@ import { db } from "../firebase";
 import { User,Packet } from '../utils/types';
 import styles from './Users.module.scss'
 import PageContainer from '../components/Layout/PageContainer'
+import PacketCardList from '../components/PacketCardList';
 
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
@@ -50,9 +51,8 @@ const Users : React.FC<urlProps> = (props) => {
                 history.push('/')
             }
         })
-    },[history,props.match.params.userId])
+    },[history, props.match.params.userId])
 
-    console.log(subscribePackets)
     console.log(ownPackets)
 
     return(
@@ -65,7 +65,18 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                  }
             </div>
-
+            <div>
+                <p>自分のパケット</p>
+                {
+                    ownPackets !== undefined &&
+                    <PacketCardList packets={ownPackets}/>
+                }
+                <p>いいねしたパケット</p>
+                {
+                    subscribePackets !== undefined &&
+                    <PacketCardList packets={subscribePackets}/>
+                }
+            </div>
         </PageContainer>
     )
 }
