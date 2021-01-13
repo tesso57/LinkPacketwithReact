@@ -7,7 +7,7 @@ import styles from './Users.module.scss'
 import PageContainer from '../components/Layout/PageContainer'
 import PacketCardList from '../components/PacketCardList';
 import IconButton from '@material-ui/core/IconButton';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddIcon from '@material-ui/icons/Add';
 
 type urlProps = {} & RouteComponentProps<{userId : string}>;
 
@@ -96,9 +96,11 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                 }
             </div>
-            <IconButton >
-                <AddCircleIcon style={{ fontSize: 100,color: `#F6B40D`}} />
-            </IconButton>
+            <div className={styles.createButton}>
+                <IconButton >
+                    <AddIcon style={{ fontSize: 100,color:`#fff`,backgroundColor:`#F6B40D`,borderRadius:`50%`}} />
+                </IconButton>
+            </div>
         </PageContainer>
     )
 }

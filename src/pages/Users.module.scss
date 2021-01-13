@@ -6,12 +6,10 @@
     border: solid 1px $color-gray;
     border-radius: 50%;
     object-fit: contain;
-    margin-right: 4rem;
 }
 
 .username {
     font-size : 24px;
-    margin-left: 4rem;
     font-weight: bold;
 }
 
@@ -26,6 +24,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 5rem;
 
     margin-top:2rem;
     margin-bottom:2rem;
@@ -33,4 +32,10 @@
 
 .tips {
     text-align: center;
+}
+
+.createButton {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
 }
