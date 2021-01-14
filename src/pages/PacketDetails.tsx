@@ -19,20 +19,23 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     const history = useHistory();
     const [openTips, setOpenTips] = useState<boolean[] | undefined>(undefined);
 
-    const handleCloseTip = useCallback((i: number): void => {
-        if (openTips === undefined) return;
-        const tmpOpenTips = openTips;
-        tmpOpenTips[i] = false;
-        setOpenTips(tmpOpenTips);
-    },[openTips]);
+    const handleCloseTip = useCallback((i: number) => {
+        setOpenTips(currentTips => {
+            if (currentTips === undefined) return;
+            const tmpOpenTips = currentTips;
+            tmpOpenTips[i] = false;
+            return tmpOpenTips;
+        })
+    },[]);
 
-    const handleClickButton = useCallback((i: number): void => {
-        if (openTips === undefined) return;
-        const tmpOpenTips = openTips;
-        tmpOpenTips[i] = true;
-        setOpenTips(tmpOpenTips);
-        console.log(openTips);
-    },[openTips]);
+    const handleOpenTip = useCallback((i: number) => {
+        setOpenTips(currentTips => {
+            if (currentTips === undefined) return;
+            const tmpOpenTips = currentTips;
+            tmpOpenTips[i] = true;
+            return tmpOpenTips;
+        })
+    },[]);
 
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
@@ -76,7 +79,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                                             arrow
                                             open={openTips[i]}
                                             placement='top'
-                                            onClose={() =>handleCloseTip(i)}
+                                            onClose={() => handleCloseTip(i)}
                                             disableFocusListener
                                             disableHoverListener
                                             disableTouchListener
@@ -84,7 +87,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                                         >
                                             {/* <CopyToClipBoard text={url.link}> */}
                                                 <IconButton
-                                                    onClick={() => handleClickButton(i)}
+                                                    onClick={ () => handleOpenTip(i)}
                                                 >
                                                     <AssignmentIcon/>
                                                 </IconButton>
