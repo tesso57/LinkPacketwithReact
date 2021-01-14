@@ -34,8 +34,9 @@ const Users : React.FC<urlProps> = (props) => {
                 Promise.all(tmpUser.packetRefs.map(
                     async packet => {
                         const packetRef = await packet.get()
-                        const packetData = packetRef.data() as Packet
-                        tmpOwnPackets.push(packetData)
+                        if (packetRef.exists){
+                            tmpOwnPackets.push(packetRef.data())
+                        }
                     }
                 )).then(() => {
                     setOwnPackets(tmpOwnPackets)
@@ -49,8 +50,9 @@ const Users : React.FC<urlProps> = (props) => {
                 Promise.all(tmpUser.subscribePacketRefs.map(
                     async packet => {
                         const packetRef = await packet.get()
-                        const packetData = packetRef.data() as Packet
-                        tmpSubscribePackets.push(packetData)
+                        if (packetRef.exists){
+                            tmpSubscribePackets.push( await packetRef.data())
+                        }
                     }
                 )).then(() => {
                     setSubscribePackets(tmpSubscribePackets)
@@ -66,7 +68,6 @@ const Users : React.FC<urlProps> = (props) => {
     },[history, props.match.params.userId])
 
     const createButton = () => {
-        console.log('render');
         //新規bookmarkを発行
         if (currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return
         //packetDataを新既発行
@@ -75,12 +76,12 @@ const Users : React.FC<urlProps> = (props) => {
             userRef : currentUserRef,
             urls: [],
             title: '無題のパケット',
-            postedDate: firebase.firestore.Timestamp.fromDate(new Date())
+            postedDate: firebase.firestore.Timestamp.now()
         }
         
         db.collection('packets').add(initPacketData).then((docRef) => {
             //userをupdate
-            const packetRef = db.collection('packcets').doc(docRef.id);
+            const packetRef = db.collection('packets').doc(docRef.id);
             currentUserRef.update({
                 packetRefs : [...currentUser.packetRefs, packetRef]
             })
@@ -121,7 +122,6 @@ const Users : React.FC<urlProps> = (props) => {
                 { nonOwnPacketFlag &&
                         <h2 className={styles.tips}>パケットを作成しましょう！</h2>
                 }
-                    
                 {
                     (subscribePackets !== undefined && !nonSubscribePacketFlag) &&
                     <>

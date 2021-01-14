@@ -22,7 +22,6 @@ const Header: FC = () => {
     const logout = auth.logout;
     const history = useHistory();
     useEffect(() => {
-        console.log(history.location.pathname);
     }, [history]);
     return (
         <Toolbar className={styles.Header}>
