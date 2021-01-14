@@ -129,11 +129,15 @@ const Users : React.FC<urlProps> = (props) => {
                     </>
                 }
             </div>
-            <div className={styles.createButton}>
-                <IconButton onClick={createButton}>
-                    <AddIcon style={{ fontSize: 100,color:`#fff`,backgroundColor:`#F6B40D`,borderRadius:`50%`}} />
-                </IconButton>
-            </div>
+            {
+                 (currentUser !== null &&  history.location.pathname.includes(`users/${currentUser.id}`)) && 
+                 <div className={styles.createButton}>
+                 <IconButton onClick={createButton}>
+                     <AddIcon style={{ fontSize: 100,color:`#fff`,backgroundColor:`#F6B40D`,borderRadius:`50%`}} />
+                 </IconButton>
+             </div>
+            }
+
         </PageContainer>
     )
 }
