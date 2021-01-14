@@ -13,3 +13,10 @@
   display: flex;
   justify-content: center;
 }
+
+
+.CardHeader {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
