@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Container, List, TextField, IconButton } from '@material-ui/core';
+import { Container, List, TextField, IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
+import { Alert } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import { Packet, URL } from '../utils/types/index';
 import BookmarkListItem from './BookmarkListItem';
-import AddBookmark from './AddBookmark';
+import EditBookmark from './EditBookmark';
 import styles from './BookmarkList.module.scss';
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
   editable?: boolean,
   onChange?: React.Dispatch<React.SetStateAction<Packet | undefined>>,
   save?: () => void,
+  packetAlert?: string,
+  setPacketAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
 };
 
 const StyledTextField = withStyles({
@@ -32,32 +35,62 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const [title, setTitle] = useState<string>('');
   const [url, setUrl] = useState<string>('');
   const [addFlag, setAddFlag] = useState<boolean>(false);
+  const [editAlert, setEditAlert] = useState<string | undefined>(undefined);
   const add = () => {
-    setAddFlag(false);
     const newUrl: URL = { link: url, title: title };
+    const re = /https?:\/\/[\w!?/+\-_~;.,*&@#$%()'[\]]+/g;
+    if(newUrl.link === "" || newUrl.link.match(re) === null) {
+      setEditAlert("URLが有効ではありません");
+      return;
+    }
+    if(newUrl.title === "") {
+      const takeDomein = /^https?:\/{2,}(.*?)(?:\/|\?|#|$)/g;
+      const res = newUrl.link.match(takeDomein);
+      if(res !== null && res.length > 0) newUrl.title = res[0].replace(/^https?:\/\//g, '').replace(/\/$/g, '');
+      else newUrl.title = "untitled";
+    }
     const newPacket: Packet = props.packet;
     newPacket.urls.push(newUrl);
     if(props.onChange !== undefined) props.onChange(newPacket);
+    setAddFlag(false);
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
   const changeTitle = (newTitle: string) => setTitle(newTitle);
   const changeUrl = (newUrl: string) => setUrl(newUrl);
+  const mergeURL = (index: number, newUrl: URL) => {
+    const newPacket: Packet = props.packet;
+    newPacket.urls[index] = newUrl;
+    if(props.onChange !== undefined) props.onChange(newPacket);
+  };
+  const deleteUrl = (index: number) => {
+    const newPacket: Packet = props.packet;
+    newPacket.urls.splice(index, 1);
+    if(props.onChange !== undefined) props.onChange(newPacket);
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
+  };
+  const [listItem, setListItem] = useState<JSX.Element[]>(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   return (
     <Container maxWidth="lg">
         { props.editable ? 
           <div>
             <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? (props.packet.title === "") ? "Packet Title" : props.packet.title : "Packet Title"}/>
-            <IconButton aria-label="add" onClick={() => { setAddFlag(true); setTitle(''); setUrl(''); }}>
-              <AddIcon />
-            </IconButton>
-            <IconButton aria-label="save" onClick={(props.save !== undefined) ? props.save : () => {}}>
-              <SaveIcon />
-            </IconButton>
+            <Tooltip title="Add Bookmark" placement="top">
+              <IconButton aria-label="add" onClick={() => { setAddFlag(true); if(props.setPacketAlert !== undefined) props.setPacketAlert(undefined); setTitle(''); setUrl(''); }}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Save Packet" placement="top">
+              <IconButton aria-label="save" onClick={(props.save !== undefined) ? props.save : () => {}}>
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
+            { (props.packetAlert !== undefined) ? <Alert severity="info">{props.packetAlert}</Alert> : <></> }
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
         <List component="nav" className={styles.Container}>
-            { props.packet?.urls.map((url) => <BookmarkListItem key={url.link} url={url} />) }
-            { addFlag ? <AddBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} /> : <></> }
+            { listItem }
+            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} /> : <></> }
         </List>
     </Container>
   );
