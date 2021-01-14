@@ -75,7 +75,7 @@ const Users : React.FC<urlProps> = (props) => {
             userRef : currentUserRef,
             urls: [],
             title: '無題のパケット',
-            postedDate: firebase.firestore.FieldValue.serverTimestamp()
+            postedDate: firebase.firestore.Timestamp.fromDate(new Date())
         }
         
         db.collection('packets').add(initPacketData).then((docRef) => {
