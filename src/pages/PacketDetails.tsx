@@ -18,7 +18,6 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         const docRef = db.collection('packets').doc(props.match.params.packetId);
         docRef.get().then(doc => {
             if (doc.exists) {
-                console.log(doc.data());
                 setPacket(doc.data() as Packet)
             } else {
                 history.push('/')

@@ -63,6 +63,7 @@ const AuthProvider: React.FC = ({children}) => {
 
     const logout = () => {
         auth.signOut();
+        setCurrentUser(null);
     }
 
     return(
