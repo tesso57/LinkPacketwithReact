@@ -40,7 +40,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
         const tempFaviconUrls = new Array<string>();
         packet.urls.forEach(url => tempFaviconUrls.push(getFaviconUrl(url.link)));
         setFaviconUrls(tempFaviconUrls);
-    }, [history]);
+    }, [history, packet.urls]);
     return (
         <Card className={styles.Card}>
             <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
