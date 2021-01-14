@@ -53,6 +53,7 @@ const head = (width: number, str: string) => {
 
 const BookmarkListItem: FC<Props> = (props) => {
   const [editFlag, setEditFlag] = useState<boolean>(false);
+  const [editAlert, setEditAlert] = useState<string | undefined>(undefined);
   const changeTitle = (newTitle: string) => {
     props.url.title = newTitle;
     if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, props.url);
@@ -61,13 +62,26 @@ const BookmarkListItem: FC<Props> = (props) => {
     props.url.link = newUrl;
     if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, props.url);
   };
-  const add = () => setEditFlag(false);
+  const add = () => {
+    const re = /https?:\/\/[\w!?/+\-_~;.,*&@#$%()'[\]]+/g;
+    if(props.url.link === "" || props.url.link.match(re) === null) {
+      setEditAlert("URLが有効ではありません");
+      return;
+    }
+    if(props.url.title === "") {
+      const takeDomein = /^https?:\/{2,}(.*?)(?:\/|\?|#|$)/g;
+      const res = props.url.link.match(takeDomein);
+      if(res !== null && res.length > 0) props.url.title = res[0].replace(/^https?:\/\//g, '').replace(/\/$/g, '');
+      else props.url.title = "untitled";
+    }
+    setEditFlag(false);
+  };
   const deleteButton = () => {
     if(props.index !== undefined && props.deleteUrl !== undefined) props.deleteUrl(props.index);
   };
   const width = useWindowDimensions();
 
-  if(editFlag) return <EditBookmark url={props.url} changeTitle={changeTitle} changeUrl={changeUrl} add={add} />;
+  if(editFlag) return <EditBookmark url={props.url} changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} />;
 
   return (
     <Paper elevation={2}>

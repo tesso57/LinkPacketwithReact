@@ -15,12 +15,14 @@ const EditPacket: FC<urlProps> = (props) => {
   const packetId = props.match.params.packetId;
   const history = useHistory();
   const [packet, setPacket] = useState<Packet | undefined>(undefined);
+  const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
   const auth = useContext(AuthContext);
 
   const save = async () => {
     if(packet === undefined) return;
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
+    setPacketAlert("Packet has been saved successfully!");
   };
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const EditPacket: FC<urlProps> = (props) => {
       <Link to={"/users/" + auth.currentUser?.id}>
         <Button size="large" startIcon={<KeyboardReturnIcon />}>マイページに戻る</Button>
       </Link>
-      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} editable /> : <></> }
+      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} packetAlert={packetAlert} setPacketAlert={setPacketAlert} editable /> : <></> }
     </PageContainer>
   );
 };

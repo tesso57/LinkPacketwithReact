@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { Container, List, TextField, IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
+import { Alert } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import { Packet, URL } from '../utils/types/index';
 import BookmarkListItem from './BookmarkListItem';
@@ -13,6 +14,8 @@ type Props = {
   editable?: boolean,
   onChange?: React.Dispatch<React.SetStateAction<Packet | undefined>>,
   save?: () => void,
+  packetAlert?: string,
+  setPacketAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
 };
 
 const StyledTextField = withStyles({
@@ -33,13 +36,18 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const [url, setUrl] = useState<string>('');
   const [addFlag, setAddFlag] = useState<boolean>(false);
   const [editAlert, setEditAlert] = useState<string | undefined>(undefined);
-  const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
   const add = () => {
     const newUrl: URL = { link: url, title: title };
     const re = /https?:\/\/[\w!?/+\-_~;.,*&@#$%()'[\]]+/g;
-    if(newUrl.link === "" || newUrl.link.match(re) !== null) {
+    if(newUrl.link === "" || newUrl.link.match(re) === null) {
       setEditAlert("URLが有効ではありません");
       return;
+    }
+    if(newUrl.title === "") {
+      const takeDomein = /^https?:\/{2,}(.*?)(?:\/|\?|#|$)/g;
+      const res = newUrl.link.match(takeDomein);
+      if(res !== null && res.length > 0) newUrl.title = res[0].replace(/^https?:\/\//g, '').replace(/\/$/g, '');
+      else newUrl.title = "untitled";
     }
     const newPacket: Packet = props.packet;
     newPacket.urls.push(newUrl);
@@ -67,7 +75,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
           <div>
             <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? (props.packet.title === "") ? "Packet Title" : props.packet.title : "Packet Title"}/>
             <Tooltip title="Add Bookmark" placement="top">
-              <IconButton aria-label="add" onClick={() => { setAddFlag(true); setTitle(''); setUrl(''); }}>
+              <IconButton aria-label="add" onClick={() => { setAddFlag(true); if(props.setPacketAlert !== undefined) props.setPacketAlert(undefined); setTitle(''); setUrl(''); }}>
                 <AddIcon />
               </IconButton>
             </Tooltip>
@@ -76,13 +84,13 @@ const BookmarkList: FC<Props> = (props: Props) => {
                 <SaveIcon />
               </IconButton>
             </Tooltip>
-            {/* { (packetAlert !== undefined) ?  } */}
+            { (props.packetAlert !== undefined) ? <Alert severity="info">{props.packetAlert}</Alert> : <></> }
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
         <List component="nav" className={styles.Container}>
             { listItem }
-            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} /> : <></> }
+            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} /> : <></> }
         </List>
     </Container>
   );

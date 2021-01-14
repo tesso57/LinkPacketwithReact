@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Paper, ListItem, ListItemText, TextField, IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import { Alert } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import { URL } from '../utils/types/url';
 
@@ -8,7 +9,8 @@ type Props = {
   url?: URL,
   changeTitle: (newTitle: string) => void,
   changeUrl: (newUrl: string) => void,
-  add: () => void
+  add: () => void,
+  editAlert?: string,
 };
 
 const StyledTextField = withStyles({
@@ -20,6 +22,7 @@ const StyledTextField = withStyles({
 
 const EditBookmark: FC<Props> = (props) => (
   <Paper elevation={4}>
+    { (props.editAlert !== undefined) ? <Alert severity="error">{props.editAlert}</Alert> : <></> }
     <ListItem>
       <ListItemText
         primary={
