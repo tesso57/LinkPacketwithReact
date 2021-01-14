@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import { Container, List, TextField, IconButton } from '@material-ui/core';
+import { Container, List, TextField, IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
 import { withStyles } from '@material-ui/core/styles';
 import { Packet, URL } from '../utils/types/index';
 import BookmarkListItem from './BookmarkListItem';
-import AddBookmark from './AddBookmark';
+import EditBookmark from './EditBookmark';
 import styles from './BookmarkList.module.scss';
 
 type Props = {
@@ -41,23 +41,32 @@ const BookmarkList: FC<Props> = (props: Props) => {
   };
   const changeTitle = (newTitle: string) => setTitle(newTitle);
   const changeUrl = (newUrl: string) => setUrl(newUrl);
+  const mergeURL = (index: number, newUrl: URL) => {
+    const newPacket: Packet = props.packet;
+    newPacket.urls[index] = newUrl;
+    if(props.onChange !== undefined) props.onChange(newPacket);
+  };
   return (
     <Container maxWidth="lg">
         { props.editable ? 
           <div>
             <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? (props.packet.title === "") ? "Packet Title" : props.packet.title : "Packet Title"}/>
-            <IconButton aria-label="add" onClick={() => { setAddFlag(true); setTitle(''); setUrl(''); }}>
-              <AddIcon />
-            </IconButton>
-            <IconButton aria-label="save" onClick={(props.save !== undefined) ? props.save : () => {}}>
-              <SaveIcon />
-            </IconButton>
+            <Tooltip title="Add Bookmark" placement="top">
+              <IconButton aria-label="add" onClick={() => { setAddFlag(true); setTitle(''); setUrl(''); }}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Save Packet" placement="top">
+              <IconButton aria-label="save" onClick={(props.save !== undefined) ? props.save : () => {}}>
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
         <List component="nav" className={styles.Container}>
-            { props.packet?.urls.map((url) => <BookmarkListItem key={url.link} url={url} />) }
-            { addFlag ? <AddBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} /> : <></> }
+            { props.packet?.urls.map((url) => <BookmarkListItem key={url.link} url={url} onChange={mergeURL} editable />) }
+            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} /> : <></> }
         </List>
     </Container>
   );
