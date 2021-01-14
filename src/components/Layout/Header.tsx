@@ -70,6 +70,7 @@ const Header: React.FC = () => {
                          doNo={() => setIsDialogOpen(false)}/>
             <Toolbar className={styles.Header}>
                 <img className={styles.HeaderTitle} src={titleURL} alt="title" onClick={() => history.push('/')}/>
+                <div className={styles.RightActionContainer}>
                 {
                     (currentUser === null) ?
                         <StyledButton className={styles.HeaderButton} variant="contained" onClick={login}
@@ -78,10 +79,11 @@ const Header: React.FC = () => {
                             <StyledButton className={styles.HeaderButton} variant="contained"
                                           onClick={() => setIsDialogOpen(true)}
                                           disableElevation>SIGNOUT</StyledButton> :
-                            <IconButton onClick={() => history.push(`users/${currentUser.id}`)} className={styles.HeaderIcon}>
+                            <IconButton onClick={() => history.push(`users/${currentUser.id}`)} >
                                 <img src={currentUser.photoUrl || ""} alt="user-icon" className={styles.HeaderIcon}/>
                             </IconButton>
                 }
+                </div>
             </Toolbar>
         </>
     );

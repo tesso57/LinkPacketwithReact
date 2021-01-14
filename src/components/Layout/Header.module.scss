@@ -16,7 +16,6 @@
 }
 
 .HeaderIcon {
-  margin: 0 0 0 auto;
   width: 3.125rem;
   border: none;
   border-radius: 1.5625rem;
@@ -25,4 +24,8 @@
 .HeaderButton {
   width: 6.0625rem;
   height: 2.25rem;
+}
+
+.RightActionContainer {
+  margin: 0 0 0 auto;
 }
