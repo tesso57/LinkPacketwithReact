@@ -6,7 +6,7 @@ import {
     CardContent,
     CardHeader,
     Container,
-    IconButton
+    IconButton,
 } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import {Packet} from '../utils/types';
@@ -26,12 +26,30 @@ const onClickShareButton = (packetId: string) => () => {
 };
 
 const getFaviconUrl = (url: string) => {
+    if (url === '') return '';
     const deletedHead =
         url.replace('https://', '').replace('http://', '');
     const index = deletedHead.indexOf('/');
     const serviceUrl = deletedHead.substring(0, index);
     return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
 };
+
+const head10 = (str: string) => {
+    const head20 = str.substr(0, 20);
+    const result = new Array<string>();
+    let pos = 0;
+    const toNumbers: number[] = head20.split('').map(char => {
+        if (char.match(/[ -~]/)) return 1;
+        else return 2;
+    });
+    if (toNumbers.reduce((sum, num) => sum += num, 0) < 20) return head20;
+    toNumbers.forEach((num, index) => {
+        pos += num;
+        if (pos <= 20) result.push(head20[index])
+    });
+    return result.join('') + '...';
+};
+
 
 const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
     const history = useHistory();
@@ -45,12 +63,14 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
         <Card className={styles.Card}>
             <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
                 <CardHeader
-                    title={packet.title}
+                    className={styles.CardHeader}
+                    title={head10(packet.title)}
+                    titleTypographyProps={{variant: 'h6'}}
                 />
                 <CardContent>
                     {
                         faviconUrls?.map((url, i) => (
-                                <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
+                                (url !== '' && i < 9) && <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
                             )
                         )
                     }
