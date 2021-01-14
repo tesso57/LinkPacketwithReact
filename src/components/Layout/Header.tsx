@@ -1,10 +1,10 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../../utils/auth/AuthProvider';
 import {Toolbar, Button, IconButton, Dialog, DialogContent, DialogActions} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './Header.module.scss';
 import titleURL from '../../assets/title.png';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 
 const StyledButton = withStyles({
     root: {
@@ -49,16 +49,16 @@ const YesNoDialog: React.FunctionComponent<{ msg: string, isOpen: boolean, doYes
     )
 }
 
-const Header: FC = () => {
-    const auth = useContext(AuthContext);
-    const user = auth.currentUser;
-    const login = auth.login;
-    const logout = auth.logout;
+const Header: React.FC = () => {
+    const {currentUser,login,logout} = useContext(AuthContext)
     const history = useHistory();
+    const location = useLocation();
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
     useEffect(() => {
-    }, [history]);
-    
+        console.log("render")
+    }, [location]);
+
     const logoutAndGoTop = (callback: () => void) => () => {
         callback();
         setIsDialogOpen(false);
@@ -71,15 +71,15 @@ const Header: FC = () => {
             <Toolbar className={styles.Header}>
                 <img className={styles.HeaderTitle} src={titleURL} alt="title" onClick={() => history.push('/')}/>
                 {
-                    (user === null) ?
+                    (currentUser === null) ?
                         <StyledButton className={styles.HeaderButton} variant="contained" onClick={login}
                                       disableElevation>SIGNIN</StyledButton> :
-                        (history.location.pathname.includes(`users/${user.id}`)) ?
+                        (history.location.pathname.includes(`users/${currentUser.id}`)) ?
                             <StyledButton className={styles.HeaderButton} variant="contained"
                                           onClick={() => setIsDialogOpen(true)}
                                           disableElevation>SIGNOUT</StyledButton> :
-                            <IconButton onClick={() => history.push(`users/${user?.id}`)} className={styles.HeaderIcon}>
-                                <img src={user.photoUrl || ""} alt="user-icon" className={styles.HeaderIcon}/>
+                            <IconButton onClick={() => history.push(`users/${currentUser.id}`)} className={styles.HeaderIcon}>
+                                <img src={currentUser.photoUrl || ""} alt="user-icon" className={styles.HeaderIcon}/>
                             </IconButton>
                 }
             </Toolbar>
