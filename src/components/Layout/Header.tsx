@@ -65,7 +65,7 @@ const Header: FC = () => {
     };
     return (
         <>
-            <YesNoDialog msg={'ログアウトしますか？'} isOpen={isDialogOpen} doYes={logoutAndGoTop(logout)}
+            <YesNoDialog msg={'サインアウトしますか？'} isOpen={isDialogOpen} doYes={logoutAndGoTop(logout)}
                          doNo={() => setIsDialogOpen(false)}/>
             <Toolbar className={styles.Header}>
                 <img className={styles.HeaderTitle} src={titleURL} alt="title" onClick={() => history.push('/')}/>
