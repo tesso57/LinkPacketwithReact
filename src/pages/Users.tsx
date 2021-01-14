@@ -100,7 +100,6 @@ const Users : React.FC<urlProps> = (props) => {
             history.push(`/edit/${docRef.id}`)
         })
     }
-
     return(
         <PageContainer>
             <div className={styles.userContainer}>
