@@ -83,6 +83,27 @@ const BookmarkListItem: FC<Props> = (props) => {
 
   if(editFlag) return <EditBookmark url={props.url} changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} />;
 
+  if(props.editable) return (
+    <Paper elevation={2}>
+      <ListItem className={styles.List}>
+        <ListItemText primary={props.url.title} secondary={head(width, props.url.link)} />
+        { props.editable ? (<>
+          <Tooltip title="Edit" placement="top">
+            <IconButton aria-label="Edit" onClick={() => setEditFlag(true)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete" placement="top">
+            <IconButton aria-label="Delete" onClick={deleteButton}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+          </>): <></>
+        }
+      </ListItem>
+    </Paper>
+  );
+
   return (
     <Paper elevation={2}>
       <ListItem className={styles.List} button>
