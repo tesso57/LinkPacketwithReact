@@ -9,6 +9,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import CopyToClipBoard from 'react-copy-to-clipboard';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import PageContainer from "../components/Layout/PageContainer"
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 
 const onClickItem = (link: string) => () => window.location.replace(link);
@@ -39,37 +40,40 @@ const Bookmark :React.FC<Props> = (props) => {
     return (
         <Paper elevation={2}>
             <ListItem key={props.key} className={styles.list} button>
-                ListItemText primary={head10(props.url.title)} 
+                <ListItemText primary={head10(props.url.title)} 
                              secondary={head10(props.url.link)}
                              primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
                              secondaryTypographyProps={{ style: { wordWrap: `break-word` }}}
                              onClick={onClickItem(props.url.link)}/>
+                <ListItemSecondaryAction>
+                    <ClickAwayListener onClickAway={() => setOpen(false)}>
+                        <div >
+                            <Tooltip
+                                PopperProps={{
+                                    disablePortal: true,
+                            }}
+                                arrow
+                                open={open}
+                                onClose={() => setOpen(false)}
+                                placement='top'
+                                disableFocusListener
+                                disableHoverListener
+                                disableTouchListener
+                                title='URL Copied!'
+                            >
+                                    <CopyToClipBoard text={props.url.link} >
+                                        <IconButton
+                                            onClick={ () => setOpen(true)}
+                                            edge="end"
+                                        >
+                                            <AssignmentIcon />
+                                        </IconButton>
+                                    </CopyToClipBoard>
+                            </Tooltip>
+                        </div>
+                    </ClickAwayListener>
+                </ListItemSecondaryAction>
             </ListItem>
-                <ClickAwayListener onClickAway={() => setOpen(false)}>
-                    <div>
-                        <Tooltip
-                            PopperProps={{
-                                disablePortal: true,
-                        }}
-                            arrow
-                            open={open}
-                            onClose={() => setOpen(false)}
-                            placement='top'
-                            disableFocusListener
-                            disableHoverListener
-                            disableTouchListener
-                            title='URL Copied!'
-                        >
-                            <CopyToClipBoard text={props.url.link}>
-                                <IconButton
-                                    onClick={ () => setOpen(true)}
-                                >
-                                    <AssignmentIcon/>
-                                </IconButton>
-                            </CopyToClipBoard>
-                        </Tooltip>
-                    </div>
-                </ClickAwayListener>
         </Paper>
     )
 }
