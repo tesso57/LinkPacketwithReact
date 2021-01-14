@@ -7,6 +7,7 @@ import styles from './PacketDetails.module.scss';
 import {useHistory} from "react-router-dom";
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CopyToClipBoard from 'react-copy-to-clipboard';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
@@ -30,6 +31,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         const tmpOpenTips = openTips;
         tmpOpenTips[i] = true;
         setOpenTips(tmpOpenTips);
+        console.log(openTips);
     },[openTips]);
 
     useEffect(() => {
@@ -63,23 +65,35 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                                 <ListItemText primary={url.title} secondary={url.link}
                                               onClick={onClickItem(url.link)}/>
                             </ListItem>
-                            <Tooltip
-                                arrow
-                                open={openTips && openTips[i]}
-                                onClose={() => handleCloseTip(i)}
-                                disableHoverListener
-                                placement='top'
-                                title='URL Copied!'
-                            >
-                                <CopyToClipBoard text={url.link}>
-                                    <IconButton
-                                        onClick={() => handleClickButton(i)}
-                                    >
-                                        <AssignmentIcon/>
-                                    </IconButton>
-                                </CopyToClipBoard>
-                            </Tooltip>
-
+                            {
+                                openTips !== undefined &&
+                                <ClickAwayListener onClickAway={() => handleCloseTip(i)}>
+                                    <div>
+                                        <Tooltip
+                                            PopperProps={{
+                                                disablePortal: true,
+                                        }}
+                                            arrow
+                                            open={openTips[i]}
+                                            placement='top'
+                                            onClose={() =>handleCloseTip(i)}
+                                            disableFocusListener
+                                            disableHoverListener
+                                            disableTouchListener
+                                            title='URL Copied!'
+                                        >
+                                            {/* <CopyToClipBoard text={url.link}> */}
+                                                <IconButton
+                                                    onClick={() => handleClickButton(i)}
+                                                >
+                                                    <AssignmentIcon/>
+                                                </IconButton>
+                                            {/* </CopyToClipBoard> */}
+                                        </Tooltip>
+                                    </div>
+                                </ClickAwayListener>
+                            }
+                            
                         </Paper>
                     ))
                 }
