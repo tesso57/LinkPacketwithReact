@@ -38,6 +38,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
     const newPacket: Packet = props.packet;
     newPacket.urls.push(newUrl);
     if(props.onChange !== undefined) props.onChange(newPacket);
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
   const changeTitle = (newTitle: string) => setTitle(newTitle);
   const changeUrl = (newUrl: string) => setUrl(newUrl);
