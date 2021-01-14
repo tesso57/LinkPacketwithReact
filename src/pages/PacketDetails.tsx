@@ -35,18 +35,21 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
         const docRef = db.collection('packets').doc(props.match.params.packetId);
+        console.log("get packet")
         docRef.get().then(doc => {
-            if (doc.exists) {
-                setPacket(doc.data() as Packet)
+            const data = doc.data() as Packet
+            if (doc.exists && data !== undefined) {
+                setPacket(data)
+                const tmpOpenTips = new Array<boolean>();
+                if(data?.urls !== undefined)
+                    data.urls.forEach(_ => tmpOpenTips.push(false));
+                setOpenTips(tmpOpenTips)
             } else {
                 history.push('/')
             }
         })
-        const tmpOpenTips = new Array<boolean>();
-        packet?.urls.forEach(_ => tmpOpenTips.push(false));
-        setOpenTips(tmpOpenTips)
-    }, [props.match.params.packetId, history,packet?.urls]);
-
+    }, [props.match.params.packetId, history]);
+    console.log("render")
     return (<>
         <Container maxWidth={"md"}>
             <h3>
