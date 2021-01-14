@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../../utils/auth/AuthProvider';
-import {Toolbar, Button, IconButton, Dialog, DialogContent, DialogActions} from '@material-ui/core';
+import {Toolbar, Button, IconButton, Dialog, DialogTitle, DialogActions} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './Header.module.scss';
 import titleURL from '../../assets/title.png';
@@ -33,14 +33,14 @@ const YesNoDialog: React.FunctionComponent<{ msg: string, isOpen: boolean, doYes
                 aria-labelledby="common-dialog-title"
                 aria-describedby="common-dialog-description"
             >
-                <DialogContent>
+                <DialogTitle>
                     {msg}
-                </DialogContent>
+                </DialogTitle>
                 <DialogActions>
-                    <Button onClick={() => doNo()} color="primary">
+                    <Button onClick={() => doNo()} style={{ color:`#F6B40D` }}>
                         No
                     </Button>
-                    <Button onClick={() => doYes()} color="primary">
+                    <Button onClick={() => doYes()} variant="contained" style={{ color:`#fff`,backgroundColor:`#F6B40D` }}>
                         Yes
                     </Button>
                 </DialogActions>
