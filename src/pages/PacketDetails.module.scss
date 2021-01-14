@@ -2,5 +2,10 @@
 
 .list {
   background-color: $color-background;
-  margin: auto;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem
 }
