@@ -25,7 +25,7 @@ const Header: FC = () => {
     }, [history]);
     return (
         <Toolbar className={styles.Header}>
-            <img className={styles.HeaderTitle} src={titleURL} alt="title"/>
+            <img className={styles.HeaderTitle} src={titleURL} alt="title" onClick={() => history.push('/')}/>
             {
                 (user === null) ?
                     <StyledButton className={styles.HeaderButton} variant="contained" onClick={login}
