@@ -32,12 +32,19 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const [title, setTitle] = useState<string>('');
   const [url, setUrl] = useState<string>('');
   const [addFlag, setAddFlag] = useState<boolean>(false);
+  const [editAlert, setEditAlert] = useState<string | undefined>(undefined);
+  const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
   const add = () => {
-    setAddFlag(false);
     const newUrl: URL = { link: url, title: title };
+    const re = /https?:\/\/[\w!?/+\-_~;.,*&@#$%()'[\]]+/g;
+    if(newUrl.link === "" || newUrl.link.match(re) !== null) {
+      setEditAlert("URLが有効ではありません");
+      return;
+    }
     const newPacket: Packet = props.packet;
     newPacket.urls.push(newUrl);
     if(props.onChange !== undefined) props.onChange(newPacket);
+    setAddFlag(false);
     setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
   const changeTitle = (newTitle: string) => setTitle(newTitle);
@@ -69,6 +76,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
                 <SaveIcon />
               </IconButton>
             </Tooltip>
+            {/* { (packetAlert !== undefined) ?  } */}
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
