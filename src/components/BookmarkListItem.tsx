@@ -54,39 +54,42 @@ const head = (width: number, str: string) => {
 const BookmarkListItem: FC<Props> = (props) => {
   const [editFlag, setEditFlag] = useState<boolean>(false);
   const [editAlert, setEditAlert] = useState<string | undefined>(undefined);
-  const changeTitle = (newTitle: string) => {
-    props.url.title = newTitle;
-    if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, props.url);
-  };
-  const changeUrl = (newUrl: string) => {
-    props.url.link = newUrl;
-    if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, props.url);
-  };
+  const [title, setTitle] = useState<string>(props.url.title);
+  const [url, setUrl] = useState<string>(props.url.link);
+  const changeTitle = (newTitle: string) => setTitle(newTitle);
+  const changeUrl = (newUrl: string) => setUrl(newUrl);
   const add = () => {
+    const newUrl: URL = { link: url, title: title };
     const re = /https?:\/\/[\w!?/+\-_~;.,*&@#$%()'[\]]+/g;
-    if(props.url.link === "" || props.url.link.match(re) === null) {
+    if(newUrl.link === "" || newUrl.link.match(re) === null) {
       setEditAlert("URLが有効ではありません");
       return;
     }
-    if(props.url.title === "") {
+    if(newUrl.title === "") {
       const takeDomein = /^https?:\/{2,}(.*?)(?:\/|\?|#|$)/g;
-      const res = props.url.link.match(takeDomein);
-      if(res !== null && res.length > 0) props.url.title = res[0].replace(/^https?:\/\//g, '').replace(/\/$/g, '');
-      else props.url.title = "untitled";
+      const res = newUrl.link.match(takeDomein);
+      if(res !== null && res.length > 0) newUrl.title = res[0].replace(/^https?:\/\//g, '').replace(/\/$/g, '');
+      else newUrl.title = "untitled";
     }
+    if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, newUrl);
     setEditFlag(false);
+  };
+  const cancel = () => {
+    setEditFlag(false);
+    if(title !== props.url.title) setTitle(props.url.title);
+    if(url !== props.url.link) setUrl(props.url.link);
   };
   const deleteButton = () => {
     if(props.index !== undefined && props.deleteUrl !== undefined) props.deleteUrl(props.index);
   };
   const width = useWindowDimensions();
 
-  if(editFlag) return <EditBookmark url={props.url} changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} />;
+  if(editFlag) return <EditBookmark url={props.url} changeTitle={changeTitle} changeUrl={changeUrl} add={add} cancel={cancel} editAlert={editAlert} />;
 
   if(props.editable) return (
     <Paper elevation={2}>
       <ListItem className={styles.List}>
-        <ListItemText primary={props.url.title} secondary={head(width, props.url.link)} />
+        <ListItemText primary={title} secondary={head(width, url)} />
         { props.editable ? (<>
           <Tooltip title="Edit" placement="top">
             <IconButton aria-label="Edit" onClick={() => setEditFlag(true)}>
@@ -107,7 +110,7 @@ const BookmarkListItem: FC<Props> = (props) => {
   return (
     <Paper elevation={2}>
       <ListItem className={styles.List} button>
-        <ListItemText primary={props.url.title} secondary={head(width, props.url.link)} onClick={onClickItem(props.url.link)}/>
+        <ListItemText primary={title} secondary={head(width, url)} onClick={onClickItem(url)}/>
         { props.editable ? (<>
           <Tooltip title="Edit" placement="top">
             <IconButton aria-label="Edit" onClick={() => setEditFlag(true)}>
