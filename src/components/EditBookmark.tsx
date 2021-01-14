@@ -21,7 +21,7 @@ const EditBookmark: FC<Props> = (props) => (
           <TextField type="text" placeholder="Bookmark URL" defaultValue={props.url?.link} onChange={(e) => props.changeUrl(e.target.value)} size="medium" />
         }
       />
-      <Tooltip title="Add this">
+      <Tooltip title="Add">
         <IconButton aria-label="add new bookmark" onClick={props.add}>
           <AddIcon />
         </IconButton>

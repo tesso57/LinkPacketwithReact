@@ -46,6 +46,13 @@ const BookmarkList: FC<Props> = (props: Props) => {
     newPacket.urls[index] = newUrl;
     if(props.onChange !== undefined) props.onChange(newPacket);
   };
+  const deleteUrl = (index: number) => {
+    const newPacket: Packet = props.packet;
+    newPacket.urls.splice(index, 1);
+    if(props.onChange !== undefined) props.onChange(newPacket);
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
+  };
+  const [listItem, setListItem] = useState<JSX.Element[]>(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   return (
     <Container maxWidth="lg">
         { props.editable ? 
@@ -65,7 +72,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
           <h3>{ props.packet?.title }</h3>
         }
         <List component="nav" className={styles.Container}>
-            { props.packet?.urls.map((url) => <BookmarkListItem key={url.link} url={url} onChange={mergeURL} editable />) }
+            { listItem }
             { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} /> : <></> }
         </List>
     </Container>
