@@ -12,6 +12,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import {Packet} from '../utils/types';
 import styles from './PacketCard.module.scss';
 import {useHistory} from "react-router-dom";
+import {MoreHoriz} from "@material-ui/icons";
 
 const createTwitterUrl = (url: string) => {
     const shareText = 'おすすめのパケットを共有します！';
@@ -70,9 +71,12 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                 <CardContent>
                     {
                         faviconUrls?.map((url, i) => (
-                                (url !== '' && i < 9) && <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
+                                (url !== '' && i < 8) && <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
                             )
                         )
+                    }
+                    {
+                        faviconUrls !== undefined && faviconUrls?.length > 9 && <MoreHoriz/>
                     }
                 </CardContent>
             </CardActionArea>
