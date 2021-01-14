@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useCallback} from 'react'
 import {RouteComponentProps} from "react-router";
 import {db} from '../firebase';
 import {Packet} from "../utils/types";
@@ -17,19 +17,20 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
     const history = useHistory();
     const [openTips, setOpenTips] = useState<boolean[] | undefined>(undefined);
-    const handleCloseTip = (i: number): void => {
+
+    const handleCloseTip = useCallback((i: number): void => {
         if (openTips === undefined) return;
         const tmpOpenTips = openTips;
         tmpOpenTips[i] = false;
         setOpenTips(tmpOpenTips);
-    };
+    },[openTips]);
 
-    const handleClickButton = (i: number): void => {
+    const handleClickButton = useCallback((i: number): void => {
         if (openTips === undefined) return;
         const tmpOpenTips = openTips;
         tmpOpenTips[i] = true;
         setOpenTips(tmpOpenTips);
-    };
+    },[openTips]);
 
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
@@ -44,7 +45,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         const tmpOpenTips = new Array<boolean>();
         packet?.urls.forEach(_ => tmpOpenTips.push(false));
         setOpenTips(tmpOpenTips)
-    }, [props.match.params.packetId, history]);
+    }, [props.match.params.packetId, history,packet?.urls]);
 
     return (<>
         <Container maxWidth={"md"}>
@@ -75,11 +76,11 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                                     </IconButton>
                                 </CopyToClipBoard>
                             </Tooltip>
+
                         </Paper>
                     ))
                 }
             </List>
-            {/*<Button variant={"contained"}>hoge</Button>*/}
         </Container>
     </>)
 };
