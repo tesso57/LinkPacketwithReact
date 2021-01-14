@@ -58,6 +58,7 @@ const Header: FC = () => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     useEffect(() => {
     }, [history]);
+    
     const logoutAndGoTop = (callback: () => void) => () => {
         callback();
         setIsDialogOpen(false);

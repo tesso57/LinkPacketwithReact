@@ -50,7 +50,7 @@ const AuthProvider: React.FC = ({children}) => {
                     }
                 }).catch((err) => {
                     alert(err);
-                })                
+                })   
             }
         );
     },[])
