@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
+import React, { FC, useState, useEffect, useContext, Suspense } from 'react';
 import { RouteComponentProps } from "react-router";
 import { useHistory, Link } from "react-router-dom";
 import { db } from "../firebase";
@@ -6,17 +6,57 @@ import { Button } from '@material-ui/core';
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import BookmarkList from '../components/BookmarkList';
 import PageContainer from '../components/Layout/PageContainer';
-import { Packet } from '../utils/types/index';
+import { Packet, User } from '../utils/types/index';
 import { AuthContext } from '../utils/auth/AuthProvider';
 
 type urlProps = {} & RouteComponentProps<{packetId : string}>;
 
-const EditPacket: FC<urlProps> = (props) => {
+const fetchPacket = (packetId: string) => db.collection('packets').doc(packetId).get();
+
+type InfoType = {
+  packet: Packet | undefined,
+  packetOwner: User | undefined,
+};
+
+let infoCache: InfoType | undefined;
+
+const getInfo = (packetId: string): InfoType => {
+  if(infoCache !== undefined) return infoCache;
+
+  const promise = fetchPacket(packetId).then((doc) => {
+    if(doc.exists) {
+      return doc.data() as Packet;
+    }
+    else {
+      return undefined;
+    }
+  }).then((packet: Packet | undefined) => {
+    if(packet !== undefined) {
+      packet.userRef.get().then((doc) => {
+        if(doc.exists) {
+          infoCache = { packet: packet, packetOwner: doc.data() as User};
+        }
+        else {
+          infoCache = { packet: packet, packetOwner: undefined}
+        }
+      });
+    }
+  });
+
+  throw promise;
+};
+
+const DataLoading: FC = () => (
+  <p>loading...</p>
+);
+
+const EditPacketPage: FC<urlProps> = (props) => {
   const packetId = props.match.params.packetId;
   const history = useHistory();
   const [packet, setPacket] = useState<Packet | undefined>(undefined);
   const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
   const auth = useContext(AuthContext);
+  const info: InfoType = getInfo(packetId);
 
   const save = async () => {
     if(packet === undefined) return;
@@ -26,17 +66,10 @@ const EditPacket: FC<urlProps> = (props) => {
   };
 
   useEffect(() => {
-    const docRef = db.collection('packets').doc(packetId);
-      docRef.get().then((doc) => {
-        if(doc.exists) {
-          const p = doc.data() as Packet;
-          setPacket(p);
-        }
-        else {
-          history.push('/')
-        }
-    });
-  },[history, packetId]);
+    if(info.packet === undefined) history.push('/');
+    else if(info.packetOwner === undefined || info.packetOwner.id !== auth.currentUser?.id) history.push('/packet/' + packetId);
+    else setPacket(info.packet);
+  }, [info, packetId, auth.currentUser?.id, history]);
 
   return (
     <PageContainer>
@@ -47,5 +80,11 @@ const EditPacket: FC<urlProps> = (props) => {
     </PageContainer>
   );
 };
+
+const EditPacket: FC<urlProps> = (props) => (
+  <Suspense fallback={<DataLoading />}>
+    <EditPacketPage {...props} />
+  </Suspense>
+)
 
 export default EditPacket;
