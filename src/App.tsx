@@ -15,7 +15,7 @@ const App: React.FC = () => {
             <Helmet
                 title={'Hello World'}
                 meta={[
-                    {name: 'twitter:card', content: 'summary'},
+                    {name: 'twitter:card', content: 'summary_large_image'},
                     {property: 'og:image', content: 'path/to/og_image'},
                     {property: 'og:title', content: 'LinkPacket'},
                     {property: 'og:description', content: 'Share Your Bookmarks!'},
