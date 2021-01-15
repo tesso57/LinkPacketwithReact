@@ -12,14 +12,12 @@ const PacketCardList: FC<{ packets: Packet[] }> = ({ packets }) => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
     const deletePackets = async () => {
-            if (deleteTarget !== '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
-            console.log(deleteTarget)
+            if (deleteTarget === '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
             //パケットを消す
             const docRef = db.collection('packets').doc(deleteTarget);
-            await docRef.delete();
+            await docRef.delete().catch((err) => console.log(err));
             //ユーザーのパケットレフを消す
             const deletedUserRefs = currentUser.packetRefs.filter((val) => (!val.isEqual(docRef)));
-            console.log(deletedUserRefs)
             //ユーザーㇾプをアップデート
             await currentUserRef.update({
                 packetRefs : deletedUserRefs
@@ -33,12 +31,11 @@ const PacketCardList: FC<{ packets: Packet[] }> = ({ packets }) => {
                         photoUrl: currentUser.photoUrl
                     }
             setCurrentUser(newCurrentUser);
-    
             window.location.reload();
           };
     return (
         <>
-        <YesNoDialog msg={'サインアウトしますか？'} isOpen={isDialogOpen} doYes={deletePackets}
+        <YesNoDialog msg={'パケットを削除しますか？'} isOpen={isDialogOpen} doYes={deletePackets}
                          doNo={() => setIsDialogOpen(false)}/>
         <div className={styles.Container}>
             {packets.map((packet) => <PacketCard key={packet.id} packet={packet} setDeleteTarget={setDeleteTarget} setIsDialogOpen={setIsDialogOpen}/>)}

@@ -23,7 +23,6 @@ const Header: React.FC = () => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log("render")
     }, [location]);
 
     const logoutAndGoTop = (callback: () => void) => () => {

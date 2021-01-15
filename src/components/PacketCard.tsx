@@ -157,6 +157,7 @@ const PacketCard: FC<Props> = (props) => {
                         <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
                         <MenuItem onClick={() => 
                         {
+                            handleClose()
                             props.setDeleteTarget(props.packet.id)
                             props.setIsDialogOpen(true)
                         }}> <DeleteIcon/> パケット削除</MenuItem>
