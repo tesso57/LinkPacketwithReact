@@ -75,7 +75,16 @@ const EditPacketPage: FC<urlProps> = (props) => {
   const goMyPage = async () => {
     if(!edited) {
       const docRef = db.collection('packets').doc(packetId);
-      await docRef.delete();
+      const userPromise = auth.currentUserRef?.get().then(async (doc) => {
+        if(doc.exists) {
+          const user = doc.data() as User;
+          user.packetRefs = user.packetRefs.filter((packetRef) => packetRef.id !== docRef.id);
+          await auth.currentUserRef?.update(user);
+          if(auth.setCurrentUser !== undefined) auth.setCurrentUser(user);
+        }
+      });
+      const deletePromise = docRef.delete();
+      await Promise.all([userPromise, deletePromise]);
     }
     history.push("/users/" + auth.currentUser?.id);
   };
