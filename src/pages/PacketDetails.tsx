@@ -12,6 +12,7 @@ import PageContainer from "../components/Layout/PageContainer"
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 
 const getFaviconUrl = (url: string) => {
     if (url === '') return '';
@@ -127,17 +128,22 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     return (
         <PageContainer>
           <Container maxWidth={"md"}>
-              <h3>
-                  {packet?.title}
-              </h3>
+              
               {
                   user !== undefined && user.photoUrl !== null && 
-                  <div className={styles.userNameContainer}>
-                    <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1rem`}}/>
-                    <span className={styles.userName}>{user.displayName}</span>
+                  <div className={styles.userDataContainer}>
+                      <div className={styles.userNameContainer}>
+                        <Button href={`/users/${user.id}`}>
+                            <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
+                            <span className={styles.userName}>{user.displayName}</span> 
+                        </Button>
+                      </div>
                     <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
                   </div>
               }
+              <h2>
+                  {packet?.title}
+              </h2>
               <List component={"nav"} className={styles.listContainer}>
                   {packet !== undefined && 
                       packet.urls.map((url, i) => (

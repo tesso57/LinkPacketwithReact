@@ -11,16 +11,20 @@
 }
 
 .userNameContainer {
-  display: flex;
-  margin : 1rem;
-  align-items: center
+  margin-right: 1.5rem;
 }
 
 .userName {
   font-weight: bold;
-  margin-right: 2rem;
+  font-size:16px
 }
 
 .date {
-  transform: translateY(2px);
+  font-size: 12px;
+}
+
+.userDataContainer {
+  display: flex;
+  margin : 1rem;
+  align-items: center
 }
