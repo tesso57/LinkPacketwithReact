@@ -17,10 +17,9 @@ const App: React.FC = () => {
                 title={'Link-Packet'}
                 meta={[
                     {name: 'twitter:card', content: 'summary_large_image'},
-                    {property: 'og:image', content: 'path/to/og_image'},
+                    {property: 'og:image', content: `${twitterCardURL}`},
                     {property: 'og:title', content: 'LinkPacket'},
                     {property: 'og:description', content: 'Share Your Bookmarks!'},
-                    {property: 'og:url', content: `${twitterCardURL}`}
                 ]}
             />
             <AuthProvider>
