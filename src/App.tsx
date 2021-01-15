@@ -16,11 +16,15 @@ const App: React.FC = () => {
             <Helmet
                 title={'Link-Packet'}
                 meta={[
+                    {name: 'description', content: 'Share Your Bookmarks!'},
                     {name: 'twitter:card', content: 'summary_large_image'},
                     {property: 'og:image', content: `${twitterCardURL}`},
                     {property: 'og:title', content: 'LinkPacket'},
                     {property: 'og:description', content: 'Share Your Bookmarks!'},
-                    {property: 'og:url', content: 'https://link-packet.web.app/'}
+                    {property: 'og:url', content: 'https://link-packet.web.app/'},
+                    {property: 'twitter:image', content: `${twitterCardURL}`},
+                    {property: 'twitter:title', content: 'LinkPacket'},
+                    {property: 'twitter:url', content: 'https://link-packet.web.app/'},
                 ]}
             />
             <AuthProvider>
