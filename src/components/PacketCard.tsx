@@ -23,7 +23,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import { AuthContext } from '../utils/auth/AuthProvider';
 import CopyToClipBoard from 'react-copy-to-clipboard';
-import {db} from '../firebase'
 
 
 const createTwitterUrl = (url: string) => {
@@ -69,41 +68,17 @@ const getUserPhoto = (url : string | null) => (
     url === null ? '' : url
 )
 
+type Props = {
+    packet : Packet;
+    setDeleteTarget : React.Dispatch<React.SetStateAction<string>>;
+}
 
-
-const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
+const PacketCard: FC<Props> = (props) => {
     const history = useHistory();
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
     const [anchor, setAnchor] = useState<any>(null);
-    const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
-
-    const deletePackets = async () => {
-        if (packet === null || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
-        console.log(packet.id)
-        //パケットを消す
-        const docRef = db.collection('packets').doc(packet.id);
-        await docRef.delete();
-        //ユーザーのパケットレフを消す
-        const deletedUserRefs = currentUser.packetRefs.filter((val) => (!val.isEqual(docRef)));
-        console.log(deletedUserRefs)
-        //ユーザーㇾプをアップデート
-        await currentUserRef.update({
-            packetRefs : deletedUserRefs
-        })
-        //カレントユーザーをアップデート
-        const newCurrentUser: User = {
-                    id : currentUser.id,
-                    packetRefs : deletedUserRefs,
-                    subscribePacketRefs: currentUser.subscribePacketRefs,
-                    displayName: currentUser.displayName,
-                    photoUrl: currentUser.photoUrl
-                }
-        setCurrentUser(newCurrentUser);
-
-        history.location.reload();
-      };
-    
+    const {currentUser} = useContext(AuthContext);
 
     const handleClick = (event : any) => {
         setAnchor(event.currentTarget);
@@ -115,14 +90,14 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
 
     useEffect(() => {
         const tempFaviconUrls = new Array<string>();
-        packet.urls.forEach(url => tempFaviconUrls.push(getFaviconUrl(url.link)));
-        packet.userRef.get().then((doc) => {
+        props.packet.urls.forEach(url => tempFaviconUrls.push(getFaviconUrl(url.link)));
+        props.packet.userRef.get().then((doc) => {
             if(doc.exists){
                 setUser(doc.data() as User)
             }
         })
         setFaviconUrls(tempFaviconUrls);
-    }, [history, packet]);
+    }, [history, props.packet]);
     return (
         <Card>
                 <CardHeader
@@ -134,8 +109,8 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                         }
                         className={styles.CardHeader}
                         title={
-                            <Button  onClick={() => history.push(`/packets/${packet.id}`)}>
-                                <span className={styles.title}>{head10(packet.title)}</span>
+                            <Button  onClick={() => history.push(`/packets/${props.packet.id}`)}>
+                                <span className={styles.title}>{head10(props.packet.title)}</span>
                             </Button>
                             
                         }
@@ -147,7 +122,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                             
                         }
                     />
-            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packets/${packet.id}`)}>
+            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packets/${props.packet.id}`)}>
                 <CardContent>
                     <div className={styles.container}>
                     {
@@ -170,17 +145,17 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                 open={Boolean(anchor)}
                 onClose={handleClose}
                 >
-                <CopyToClipBoard text={`https://link-packet.web.app/packets/${packet.id}`} >
+                <CopyToClipBoard text={`https://link-packet.web.app/packets/${props.packet.id}`} >
                     <MenuItem onClick={handleClose}>
                         <FileCopyIcon/> パケットリンクをコピー 
                     </MenuItem>
                 </CopyToClipBoard>
-                <MenuItem onClick={onClickShareButton(packet.id)}> <TwitterIcon/> ツイート </MenuItem>
+                <MenuItem onClick={onClickShareButton(props.packet.id)}> <TwitterIcon/> ツイート </MenuItem>
                 {
                     (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                     <>
-                        <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
-                        <MenuItem onClick={deletePackets}> <DeleteIcon/> パケット削除</MenuItem>
+                        <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
+                        <MenuItem onClick={() => props.setDeleteTarget(props.packet.id)}> <DeleteIcon/> パケット削除</MenuItem>
                     </>
                 }
             </Menu>
@@ -201,10 +176,10 @@ const LoadingCard: FC<{ packet: Packet }> = ({packet}) => (
     </Card>
 );
 
-const PacketCardWithSuspence: FC<{ packet: Packet }> = ({packet}) => (
+const PacketCardWithSuspence: FC<Props> = (props) => (
     <Container maxWidth={'md'}>
-        <Suspense fallback={<LoadingCard packet={packet}/>}>
-            <PacketCard packet={packet}/>
+        <Suspense fallback={<LoadingCard packet={props.packet}/>}>
+            <PacketCard {...props}/>
         </Suspense>
     </Container>
 );
