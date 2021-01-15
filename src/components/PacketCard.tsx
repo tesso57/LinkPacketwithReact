@@ -80,7 +80,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                 <CardHeader
                         avatar={
                                 user !== undefined &&
-                            <IconButton >
+                            <IconButton onClick={() => history.push(`/users/${user.id}`)}>
                                 <Avatar alt="Favicon" src={getUserPhoto(user.photoUrl)} />
                             </IconButton>
 
