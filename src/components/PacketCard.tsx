@@ -8,7 +8,9 @@ import {
     Container,
     IconButton,
     Avatar,
-    Button
+    Button,
+    Menu,
+    MenuItem
 } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import {Packet,User} from '../utils/types';
@@ -65,6 +67,16 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
     const history = useHistory();
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
+    const [anchor, setAnchor] = useState<any>(null);
+
+    const handleClick = (event : any) => {
+        setAnchor(event.currentTarget);
+    }
+
+    const handleClose = () => {
+        setAnchor(null);
+    }
+
     useEffect(() => {
         const tempFaviconUrls = new Array<string>();
         packet.urls.forEach(url => tempFaviconUrls.push(getFaviconUrl(url.link)));
@@ -83,19 +95,20 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                             <IconButton onClick={() => history.push(`/users/${user.id}`)}>
                                 <Avatar alt="Favicon" src={getUserPhoto(user.photoUrl)} />
                             </IconButton>
-
                         }
                         className={styles.CardHeader}
                         title={
                             <Button  onClick={() => history.push(`/packet/${packet.id}`)}>
                                 <span className={styles.title}>{head10(packet.title)}</span>
                             </Button>
+                            
                         }
                         titleTypographyProps={{variant: 'h6'}}
                         action={
-                            <IconButton aria-label="settings">
+                            <IconButton aria-label="settings" onClick={handleClick}>
                                 <MoreVertIcon />
                             </IconButton>
+                            
                         }
                     />
             <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
@@ -113,6 +126,19 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                     </div>
                 </CardContent>
             </CardActionArea>
+
+            <Menu
+                id="simple-menu"
+                anchorEl={anchor}
+                keepMounted
+                open={Boolean(anchor)}
+                onClose={handleClose}
+                >
+                <MenuItem onClick={handleClose}>パケットを編集</MenuItem>
+                <MenuItem onClick={handleClose}>パケットリンクをコピー</MenuItem>
+                <MenuItem onClick={handleClose}>ツイート</MenuItem>
+                <MenuItem onClick={handleClose}>パケット削除</MenuItem>
+            </Menu>
         </Card>
     );
 };
