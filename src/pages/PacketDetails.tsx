@@ -10,8 +10,17 @@ import CopyToClipBoard from 'react-copy-to-clipboard';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import PageContainer from "../components/Layout/PageContainer"
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
 
-
+const getFaviconUrl = (url: string) => {
+    if (url === '') return '';
+    const deletedHead =
+        url.replace('https://', '').replace('http://', '');
+    const index = deletedHead.indexOf('/');
+    const serviceUrl = deletedHead.substring(0, index);
+    return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
+};
 const onClickItem = (link: string) => () => window.location.replace(link);
 const head10 = (str: string) => {
     const words = 100
@@ -40,6 +49,13 @@ const Bookmark :React.FC<Props> = (props) => {
     return (
         <Paper elevation={2}>
             <ListItem key={props.key} className={styles.list} button>
+                
+                {
+                     (getFaviconUrl(props.url.link) !== '') &&
+                    <ListItemAvatar>
+                        <Avatar alt="Favicon" src={getFaviconUrl(props.url.link)} />
+                    </ListItemAvatar>
+                }
                 <ListItemText primary={head10(props.url.title)} 
                              secondary={head10(props.url.link)}
                              primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
