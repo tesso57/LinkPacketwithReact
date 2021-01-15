@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Packet} from "../utils/types";
 import {db} from "../firebase";
-import {Container} from "@material-ui/core";
 import PacketCardList from "../components/PacketCardList";
 import PageContainer from '../components/Layout/PageContainer';
 
@@ -17,10 +16,7 @@ const View: React.FC = () => {
     }, []);
   return (
     <PageContainer>
-      <Container maxWidth={'md'}>
-        <h3>Packet Gallery</h3>
-          <PacketCardList packets={packets ?? new Array<Packet>()}/>
-      </Container>
+      <PacketCardList packets={packets ?? new Array<Packet>()}/>
     </PageContainer>
   );
 };
