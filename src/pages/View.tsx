@@ -11,7 +11,7 @@ const View: React.FC = () => {
 
   useEffect(() => {
     const tempPackets = new Array<Packet>();
-      db.collection('packets').get().then(snapshot =>
+      db.collection('packets').orderBy('postedDate', 'desc').limit(18).get().then(snapshot =>
         snapshot.forEach(doc => tempPackets.push(doc.data() as Packet))
       ).then(() => setPackets(tempPackets))
     }, []);
