@@ -9,3 +9,18 @@
   flex-direction: column;
   gap: 1rem
 }
+
+.userNameContainer {
+  display: flex;
+  margin : 1rem;
+  align-items: center
+}
+
+.userName {
+  font-weight: bold;
+  margin-right: 2rem;
+}
+
+.date {
+  transform: translateY(2px);
+}

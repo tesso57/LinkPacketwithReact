@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {RouteComponentProps} from "react-router";
 import {db} from '../firebase';
-import {Packet,URL} from "../utils/types";
+import {Packet,URL,User} from "../utils/types";
 import {Container, IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
 import {useHistory} from "react-router-dom";
@@ -38,6 +38,10 @@ const head10 = (str: string) => {
     });
     return result.join('') + '...';
 };
+
+const formatDate = (date :Date) => (
+    `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日に更新`
+)
 
 type Props = {
     url : URL;
@@ -98,6 +102,7 @@ type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
 const PacketDetails: React.FC<UrlProps> = (props) => {
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
+    const [user, setUser] = useState<User | undefined>(undefined);
     const history = useHistory();
 
 
@@ -106,7 +111,13 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         const docRef = db.collection('packets').doc(props.match.params.packetId);
         docRef.get().then(doc => {
             if (doc.exists) {
-                setPacket(doc.data() as Packet)
+                const tmpPacket = doc.data() as Packet
+                setPacket(tmpPacket)
+                tmpPacket.userRef.get().then((userDoc) => {
+                    if(userDoc.exists){
+                        setUser(userDoc.data() as User)
+                    }
+                })
             } else {
                 history.push('/')
             }
@@ -119,6 +130,14 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
               <h3>
                   {packet?.title}
               </h3>
+              {
+                  user !== undefined && user.photoUrl !== null && 
+                  <div className={styles.userNameContainer}>
+                    <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1rem`}}/>
+                    <span className={styles.userName}>{user.displayName}</span>
+                    <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
+                  </div>
+              }
               <List component={"nav"} className={styles.listContainer}>
                   {packet !== undefined && 
                       packet.urls.map((url, i) => (
