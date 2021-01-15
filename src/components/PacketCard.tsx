@@ -11,7 +11,6 @@ import {
     Menu,
     MenuItem
 } from '@material-ui/core';
-import ShareIcon from '@material-ui/icons/Share';
 import EditIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -71,6 +70,7 @@ const getUserPhoto = (url : string | null) => (
 type Props = {
     packet : Packet;
     setDeleteTarget : React.Dispatch<React.SetStateAction<string>>;
+    setIsDialogOpen : React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PacketCard: FC<Props> = (props) => {
@@ -155,7 +155,11 @@ const PacketCard: FC<Props> = (props) => {
                     (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                     <>
                         <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
-                        <MenuItem onClick={() => props.setDeleteTarget(props.packet.id)}> <DeleteIcon/> パケット削除</MenuItem>
+                        <MenuItem onClick={() => 
+                        {
+                            props.setDeleteTarget(props.packet.id)
+                            props.setIsDialogOpen(true)
+                        }}> <DeleteIcon/> パケット削除</MenuItem>
                     </>
                 }
             </Menu>

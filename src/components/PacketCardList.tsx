@@ -4,9 +4,12 @@ import { Packet,User } from '../utils/types';
 import styles from './PacketCardList.module.scss';
 import { AuthContext } from '../utils/auth/AuthProvider';
 import {db} from '../firebase'
+import YesNoDialog from './Layout/YesNoDialog'
+
 
 const PacketCardList: FC<{ packets: Packet[] }> = ({ packets }) => {
     const [deleteTarget, setDeleteTarget] = useState<string>('');
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
     const deletePackets = async () => {
             if (deleteTarget !== '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
@@ -34,7 +37,13 @@ const PacketCardList: FC<{ packets: Packet[] }> = ({ packets }) => {
             window.location.reload();
           };
     return (
-        <div className={styles.Container}>{packets.map((packet) => <PacketCard key={packet.id} packet={packet} setDeleteTarget={setDeleteTarget}/>)}</div>
+        <>
+        <YesNoDialog msg={'サインアウトしますか？'} isOpen={isDialogOpen} doYes={deletePackets}
+                         doNo={() => setIsDialogOpen(false)}/>
+        <div className={styles.Container}>
+            {packets.map((packet) => <PacketCard key={packet.id} packet={packet} setDeleteTarget={setDeleteTarget} setIsDialogOpen={setIsDialogOpen}/>)}
+        </div>
+        </>
     );
 }
 
