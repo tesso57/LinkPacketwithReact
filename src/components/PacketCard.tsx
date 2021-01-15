@@ -1,18 +1,12 @@
 import React, {FC, Suspense, useEffect, useState} from 'react';
-import {
-    Card,
-    CardActionArea,
-    CardActions,
-    CardContent,
-    CardHeader,
-    Container,
-    IconButton,
-} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import {Packet} from '../utils/types';
 import styles from './PacketCard.module.scss';
 import {useHistory} from "react-router-dom";
 import {MoreHoriz} from "@material-ui/icons";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
+
 
 const createTwitterUrl = (url: string) => {
     const shareText = 'おすすめのパケットを共有します！';
@@ -61,31 +55,83 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
         setFaviconUrls(tempFaviconUrls);
     }, [history, packet.urls]);
     return (
-        <Card className={styles.Card}>
-            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
-                <CardHeader
-                    className={styles.CardHeader}
-                    title={head10(packet.title)}
-                    titleTypographyProps={{variant: 'h6'}}
-                />
-                <CardContent>
-                    {
-                        faviconUrls?.map((url, i) => (
-                                (url !== '' && i < 8) && <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
-                            )
-                        )
-                    }
-                    {
-                        faviconUrls !== undefined && faviconUrls?.length > 9 && <MoreHoriz/>
-                    }
-                </CardContent>
-            </CardActionArea>
-            <CardActions disableSpacing>
-                <IconButton className={styles.IconButtonPosition} onClick={onClickShareButton(packet.id)}>
-                    <ShareIcon/>
-                </IconButton>
-            </CardActions>
-        </Card>
+        // <Card className={styles.Card}>
+        //     <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
+        //     <CardHeader
+        //         className={styles.CardHeader}
+        //         title={head10(packet.title)}
+        //         titleTypographyProps={{variant: 'h6'}}
+        //         action={
+        //             <CardActions disableSpacing>
+        //                 <IconButton aria-label="settings">
+        //                     <MoreVertIcon />
+        //                 </IconButton>
+        //             </CardActions>
+        //             }
+        //     />
+        //         <CardContent>
+        //             {
+        //                 faviconUrls?.map((url, i) => (
+        //                         (url !== '' && i < 8) && <img key={i} src={url} alt={"favicon"} width={'25px'} height={'25px'}/>
+        //                     )
+        //                 )
+        //             }
+        //             {
+        //                 faviconUrls !== undefined && faviconUrls?.length > 9 && <MoreHoriz/>
+        //             }
+        //         </CardContent>
+        //     </CardActionArea>
+        //     <CardActions disableSpacing>
+        //         <IconButton className={styles.IconButtonPosition} onClick={onClickShareButton(packet.id)}>
+        //                 <ShareIcon/>
+        //         </IconButton>
+        //     </CardActions>
+        // </Card>
+        
+
+        <Paper elevation={2}>
+            <ListItem className={styles.list} button>
+                {
+                     (getFaviconUrl(props.url.link) !== '') &&
+                    <ListItemAvatar>
+                        <Avatar alt="Favicon" src={getFaviconUrl(props.url.link)} />
+                    </ListItemAvatar>
+                }
+                <ListItemText primary={head10(props.url.title)} 
+                             secondary={head10(props.url.link)}
+                             primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
+                             secondaryTypographyProps={{ style: { wordWrap: `break-word` }}}
+                             onClick={onClickItem(props.url.link)}/>
+                <ListItemSecondaryAction>
+                    <ClickAwayListener onClickAway={() => setOpen(false)}>
+                        <div >
+                            <Tooltip
+                                PopperProps={{
+                                    disablePortal: true,
+                            }}
+                                arrow
+                                open={open}
+                                onClose={() => setOpen(false)}
+                                placement='top'
+                                disableFocusListener
+                                disableHoverListener
+                                disableTouchListener
+                                title='URL Copied!'
+                            >
+                                    <CopyToClipBoard text={props.url.link} >
+                                        <IconButton
+                                            onClick={ () => setOpen(true)}
+                                            edge="end"
+                                        >
+                                            <AssignmentIcon />
+                                        </IconButton>
+                                    </CopyToClipBoard>
+                            </Tooltip>
+                        </div>
+                    </ClickAwayListener>
+                </ListItemSecondaryAction>
+            </ListItem>
+        </Paper>
     );
 };
 
