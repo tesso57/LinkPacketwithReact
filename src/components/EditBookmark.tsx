@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Paper, ListItem, ListItemText, TextField, IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import { URL } from '../utils/types/url';
@@ -10,6 +11,7 @@ type Props = {
   changeTitle: (newTitle: string) => void,
   changeUrl: (newUrl: string) => void,
   add: () => void,
+  cancel: () => void,
   editAlert?: string,
 };
 
@@ -35,6 +37,11 @@ const EditBookmark: FC<Props> = (props) => (
       <Tooltip title="Add">
         <IconButton aria-label="add new bookmark" onClick={props.add}>
           <AddIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Cancel">
+        <IconButton aria-label="cancel" onClick={props.cancel}>
+          <CloseIcon />
         </IconButton>
       </Tooltip>
     </ListItem>

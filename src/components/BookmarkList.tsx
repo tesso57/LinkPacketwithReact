@@ -55,12 +55,16 @@ const BookmarkList: FC<Props> = (props: Props) => {
     setAddFlag(false);
     setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
+  const cancel = () => {
+    setAddFlag(false);
+  };
   const changeTitle = (newTitle: string) => setTitle(newTitle);
   const changeUrl = (newUrl: string) => setUrl(newUrl);
   const mergeURL = (index: number, newUrl: URL) => {
     const newPacket: Packet = props.packet;
     newPacket.urls[index] = newUrl;
     if(props.onChange !== undefined) props.onChange(newPacket);
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
   const deleteUrl = (index: number) => {
     const newPacket: Packet = props.packet;
@@ -90,7 +94,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
         }
         <List component="nav" className={styles.Container}>
             { listItem }
-            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} editAlert={editAlert} /> : <></> }
+            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} cancel={cancel} editAlert={editAlert} /> : <></> }
         </List>
     </Container>
   );
