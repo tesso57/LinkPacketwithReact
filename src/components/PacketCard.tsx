@@ -77,11 +77,12 @@ const PacketCard: FC<Props> = (props) => {
     const history = useHistory();
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
-    const [anchor, setAnchor] = useState<any>(null);
+    const [anchor, setAnchor] = useState<HTMLAnchorElement | null>(null);
     const {currentUser} = useContext(AuthContext);
 
-    const handleClick = (event : any) => {
-        setAnchor(event.currentTarget);
+    const handleClick = (event?: React.BaseSyntheticEvent) => {
+        if(event === undefined) return;
+        setAnchor(event.currentTarget as HTMLAnchorElement);
     }
 
     const handleClose = () => {
