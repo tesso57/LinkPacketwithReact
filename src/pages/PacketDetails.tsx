@@ -22,7 +22,7 @@ const getFaviconUrl = (url: string) => {
     const serviceUrl = deletedHead.substring(0, index);
     return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
 };
-const onClickItem = (link: string) => () => window.location.replace(link);
+const onClickItem = (link: string) => () => window.open(link, '_blank');
 const head10 = (str: string) => {
     const words = 100
     const head20 = str.substr(0, words);
