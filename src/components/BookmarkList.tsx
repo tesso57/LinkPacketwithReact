@@ -14,8 +14,10 @@ type Props = {
   editable?: boolean,
   onChange?: React.Dispatch<React.SetStateAction<Packet | undefined>>,
   save?: () => void,
-  packetAlert?: string,
-  setPacketAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
+  packetInfoAlert?: string,
+  setPacketInfoAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
+  packetErrorAlert?: string,
+  setPacketErrorAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
 };
 
 const StyledTextField = withStyles({
@@ -79,7 +81,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
           <div>
             <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? (props.packet.title === "") ? "Packet Title" : props.packet.title : "Packet Title"}/>
             <Tooltip title="Add Bookmark" placement="top">
-              <IconButton aria-label="add" onClick={() => { setAddFlag(true); if(props.setPacketAlert !== undefined) props.setPacketAlert(undefined); setTitle(''); setUrl(''); }}>
+              <IconButton aria-label="add" onClick={() => { setAddFlag(true); if(props.setPacketInfoAlert !== undefined) props.setPacketInfoAlert(undefined); if(props.setPacketErrorAlert !== undefined) props.setPacketErrorAlert(undefined); setTitle(''); setUrl(''); }}>
                 <AddIcon />
               </IconButton>
             </Tooltip>
@@ -88,7 +90,8 @@ const BookmarkList: FC<Props> = (props: Props) => {
                 <SaveIcon />
               </IconButton>
             </Tooltip>
-            { (props.packetAlert !== undefined) ? <Alert severity="info">{props.packetAlert}</Alert> : <></> }
+            { (props.packetInfoAlert !== undefined) ? <Alert severity="info">{props.packetInfoAlert}</Alert> : <></> }
+            { (props.packetErrorAlert !== undefined) ? <Alert severity="error">{props.packetErrorAlert}</Alert> : <></> }
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
