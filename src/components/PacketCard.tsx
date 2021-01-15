@@ -23,6 +23,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import { AuthContext } from '../utils/auth/AuthProvider';
 import CopyToClipBoard from 'react-copy-to-clipboard';
+import {db} from '../firebase'
 
 
 const createTwitterUrl = (url: string) => {
@@ -69,12 +70,40 @@ const getUserPhoto = (url : string | null) => (
 )
 
 
+
 const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
     const history = useHistory();
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
     const [anchor, setAnchor] = useState<any>(null);
-    const {currentUser} = useContext(AuthContext);
+    const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
+
+    const deletePackets = async () => {
+        if (packet === null || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
+        console.log(packet.id)
+        //パケットを消す
+        const docRef = db.collection('packets').doc(packet.id);
+        await docRef.delete();
+        //ユーザーのパケットレフを消す
+        const deletedUserRefs = currentUser.packetRefs.filter((val) => (!val.isEqual(docRef)));
+        console.log(deletedUserRefs)
+        //ユーザーㇾプをアップデート
+        await currentUserRef.update({
+            packetRefs : deletedUserRefs
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+                    id : currentUser.id,
+                    packetRefs : deletedUserRefs,
+                    subscribePacketRefs: currentUser.subscribePacketRefs,
+                    displayName: currentUser.displayName,
+                    photoUrl: currentUser.photoUrl
+                }
+        setCurrentUser(newCurrentUser);
+
+        history.location.reload();
+      };
+    
 
     const handleClick = (event : any) => {
         setAnchor(event.currentTarget);
@@ -151,7 +180,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                     (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                     <>
                         <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
-                        <MenuItem onClick={handleClose}> <DeleteIcon/> パケット削除</MenuItem>
+                        <MenuItem onClick={deletePackets}> <DeleteIcon/> パケット削除</MenuItem>
                     </>
                 }
             </Menu>
