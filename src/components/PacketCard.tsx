@@ -1,8 +1,7 @@
-import React, {FC, Suspense, useEffect, useState} from 'react';
+import React, {FC, Suspense, useEffect, useState, useContext} from 'react';
 import {
     Card,
     CardActionArea,
-    CardActions,
     CardContent,
     CardHeader,
     Container,
@@ -13,11 +12,18 @@ import {
     MenuItem
 } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
+import EditIcon from '@material-ui/icons/Edit';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {Packet,User} from '../utils/types';
 import styles from './PacketCard.module.scss';
 import {useHistory} from "react-router-dom";
 import {MoreHoriz} from "@material-ui/icons";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import { AuthContext } from '../utils/auth/AuthProvider';
+import CopyToClipBoard from 'react-copy-to-clipboard';
+
 
 const createTwitterUrl = (url: string) => {
     const shareText = 'おすすめのパケットを共有します！';
@@ -26,7 +32,7 @@ const createTwitterUrl = (url: string) => {
 };
 
 const onClickShareButton = (packetId: string) => () => {
-    const link = 'https://link-packet.web.app/packet/' + packetId;
+    const link = 'https://link-packet.web.app/packets/' + packetId;
     const twitterUrl = createTwitterUrl(link);
     window.open(twitterUrl, '_blank');
 };
@@ -68,6 +74,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
     const [anchor, setAnchor] = useState<any>(null);
+    const {currentUser} = useContext(AuthContext);
 
     const handleClick = (event : any) => {
         setAnchor(event.currentTarget);
@@ -98,7 +105,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                         }
                         className={styles.CardHeader}
                         title={
-                            <Button  onClick={() => history.push(`/packet/${packet.id}`)}>
+                            <Button  onClick={() => history.push(`/packets/${packet.id}`)}>
                                 <span className={styles.title}>{head10(packet.title)}</span>
                             </Button>
                             
@@ -111,7 +118,7 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                             
                         }
                     />
-            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packet/${packet.id}`)}>
+            <CardActionArea component="div" disableRipple onClick={() => history.push(`/packets/${packet.id}`)}>
                 <CardContent>
                     <div className={styles.container}>
                     {
@@ -134,10 +141,19 @@ const PacketCard: FC<{ packet: Packet }> = ({packet}) => {
                 open={Boolean(anchor)}
                 onClose={handleClose}
                 >
-                <MenuItem onClick={handleClose}>パケットを編集</MenuItem>
-                <MenuItem onClick={handleClose}>パケットリンクをコピー</MenuItem>
-                <MenuItem onClick={handleClose}>ツイート</MenuItem>
-                <MenuItem onClick={handleClose}>パケット削除</MenuItem>
+                <CopyToClipBoard text={`https://link-packet.web.app/packets/${packet.id}`} >
+                    <MenuItem onClick={handleClose}>
+                        <FileCopyIcon/> パケットリンクをコピー 
+                    </MenuItem>
+                </CopyToClipBoard>
+                <MenuItem onClick={onClickShareButton(packet.id)}> <TwitterIcon/> ツイート </MenuItem>
+                {
+                    (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
+                    <>
+                        <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
+                        <MenuItem onClick={handleClose}> <DeleteIcon/> パケット削除</MenuItem>
+                    </>
+                }
             </Menu>
         </Card>
     );
