@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useContext, Suspense } from 'react';
 import { RouteComponentProps } from "react-router";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { Button } from '@material-ui/core';
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
@@ -55,6 +55,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
   const history = useHistory();
   const [packet, setPacket] = useState<Packet | undefined>(undefined);
   const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
+  const [edited, setEdited] = useState<boolean>(false);
   const auth = useContext(AuthContext);
   const info: InfoType = getInfo(packetId);
 
@@ -63,6 +64,15 @@ const EditPacketPage: FC<urlProps> = (props) => {
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
     setPacketAlert("Packet has been saved successfully!");
+    setEdited(true);
+  };
+
+  const goMyPage = async () => {
+    if(!edited) {
+      const docRef = db.collection('packets').doc(packetId);
+      await docRef.delete();
+    }
+    history.push("/users/" + auth.currentUser?.id);
   };
 
   useEffect(() => {
@@ -73,9 +83,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
 
   return (
     <PageContainer>
-      <Link to={"/users/" + auth.currentUser?.id}>
-        <Button size="large" startIcon={<KeyboardReturnIcon />}>マイページに戻る</Button>
-      </Link>
+      <Button size="large" startIcon={<KeyboardReturnIcon />} onClick={goMyPage}>マイページに戻る</Button>
       { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} packetAlert={packetAlert} setPacketAlert={setPacketAlert} editable /> : <></> }
     </PageContainer>
   );
