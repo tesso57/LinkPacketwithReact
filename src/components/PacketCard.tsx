@@ -21,7 +21,7 @@ const createTwitterUrl = (url: string) => {
 };
 
 const onClickShareButton = (packetId: string) => () => {
-    const link = 'https://link-packet.web.app/packet' + packetId;
+    const link = 'https://link-packet.web.app/packet/' + packetId;
     const twitterUrl = createTwitterUrl(link);
     window.open(twitterUrl, '_blank');
 };
