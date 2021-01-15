@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../../utils/auth/AuthProvider';
-import {Toolbar, Button, IconButton, Dialog, DialogTitle, DialogActions} from '@material-ui/core';
+import {Toolbar, Button, IconButton} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './Header.module.scss';
 import titleURL from '../../assets/title.png';
 import {useHistory, useLocation} from 'react-router-dom';
+import YesNoDialog from './YesNoDialog'
 
 const StyledButton = withStyles({
     root: {
@@ -15,40 +16,6 @@ const StyledButton = withStyles({
     }
 })(Button);
 
-const YesNoDialog: React.FunctionComponent<{ msg: string, isOpen: boolean, doYes: () => void, doNo: () => void }>
-    = ({msg, isOpen, doYes, doNo}) => {
-
-    const [open, setOpen] = React.useState(false);
-
-    useEffect(() => {
-        setOpen(isOpen)
-    }, [isOpen])
-
-    return (
-        <div>
-            <Dialog
-                open={open}
-                keepMounted
-                onClose={() => doNo()}
-                aria-labelledby="common-dialog-title"
-                aria-describedby="common-dialog-description"
-            >
-                <DialogTitle>
-                    {msg}
-                </DialogTitle>
-                <DialogActions>
-                    <Button onClick={() => doNo()} style={{ color:`#F6B40D` }}>
-                        No
-                    </Button>
-                    <Button onClick={() => doYes()} variant="contained" style={{ color:`#fff`,backgroundColor:`#F6B40D` }}>
-                        Yes
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    )
-}
-
 const Header: React.FC = () => {
     const {currentUser,login,logout} = useContext(AuthContext)
     const history = useHistory();
@@ -56,7 +23,6 @@ const Header: React.FC = () => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log("render")
     }, [location]);
 
     const logoutAndGoTop = (callback: () => void) => () => {
