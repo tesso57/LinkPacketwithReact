@@ -8,25 +8,13 @@ import EditPacket from './pages/EditPacket';
 import PacketDetails from './pages/PacketDetails';
 import View from './pages/View';
 import {Helmet} from 'react-helmet';
-import twitterCardURL from './assets/twitter-card.png';
+import twitterCardURL from '../public/twitter-card.png';
 
 const App: React.FC = () => {
     return (
         <>
             <Helmet>
-                <title>{'Link-Packet'}</title>
-                <meta name="description" content={'Share Your Packet!!'}/>
-                <meta property="og:url" content='https://link-packet.web.app/'/>
-                <meta property="og:type" content="website"/>
-                <meta property="og:title" content={'Link-Packet'}/>
-                <meta property="og:description" content={'Share Your Packet!!'}/>
-                <meta property="og:image" content={twitterCardURL}/>
-                <meta name="twitter:card" content="summary_large_image"/>
-                <meta name="twitter:site" content="@"/>
-                <meta name="twitter:creator" content="@"/>
-                <meta name="twitter:title" content={'Link-Packet'}/>
-                <meta name="twitter:description" content={'Share Your Packet!!'}/>
-                <meta name="twitter:image" content={twitterCardURL}/>
+
             </Helmet>
             <AuthProvider>
                 <Router>
