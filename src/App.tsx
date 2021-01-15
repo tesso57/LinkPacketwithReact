@@ -6,21 +6,22 @@ import User from './pages/Users';
 import EditPacket from './pages/EditPacket';
 import PacketDetails from './pages/PacketDetails';
 import View from './pages/View';
-import { Helmet } from "react-helmet";
+import {Helmet} from 'react-helmet';
+import twitterCardURL from '../../assets/twittercard.png';
 
 const App: React.FC = () => {
     return (
         <>
-          <Helmet
-              title={'Hello World'}
-              meta={[
-                { name: 'twitter:card', content: 'summary' },
-                { property: 'og:image', content: 'path/to/og_image' },
-                { property: 'og:title', content: 'Helloページ' },
-                { property: 'og:description', 'サンプルページです' },
-                { property: 'og:url', content: `hoge_domain${props.path}` }
-              ]}
-          />
+            <Helmet
+                title={'Hello World'}
+                meta={[
+                    {name: 'twitter:card', content: 'summary'},
+                    {property: 'og:image', content: 'path/to/og_image'},
+                    {property: 'og:title', content: 'LinkPacket'},
+                    {property: 'og:description', content: 'Share Your Bookmarks!'},
+                    {property: 'og:url', content: `${twitterCardURL}`}
+                ]}
+            />
             <AuthProvider>
                 <Router>
                     <Header/>
@@ -36,6 +37,7 @@ const App: React.FC = () => {
             </AuthProvider>
             )
         </>
+    )
 };
 
 export default App;
