@@ -8,7 +8,7 @@ import EditPacket from './pages/EditPacket';
 import PacketDetails from './pages/PacketDetails';
 import View from './pages/View';
 import {Helmet} from 'react-helmet';
-import twitterCardURL from './assets/twittercard.png';
+import twitterCardURL from './assets/twitter-card.png';
 
 const App: React.FC = () => {
     return (
