@@ -20,6 +20,7 @@ const App: React.FC = () => {
                     {property: 'og:image', content: `${twitterCardURL}`},
                     {property: 'og:title', content: 'LinkPacket'},
                     {property: 'og:description', content: 'Share Your Bookmarks!'},
+                    {property: 'og:url', content: 'link-packet.web.app'}
                 ]}
             />
             <AuthProvider>
