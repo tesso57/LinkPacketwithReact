@@ -16,15 +16,11 @@ const App: React.FC = () => {
             <Helmet
                 title={'Link-Packet'}
                 meta={[
-                    {name: 'description', content: 'Share Your Bookmarks!'},
-                    {name: 'twitter:card', content: 'summary_large_image'},
-                    {property: 'og:image', content: `${twitterCardURL}`},
-                    {property: 'og:title', content: 'LinkPacket'},
-                    {property: 'og:description', content: 'Share Your Bookmarks!'},
-                    {property: 'og:url', content: 'https://link-packet.web.app/'},
-                    {property: 'twitter:image', content: `${twitterCardURL}`},
-                    {property: 'twitter:title', content: 'LinkPacket'},
-                    {property: 'twitter:url', content: 'https://link-packet.web.app/'},
+                    { name: 'twitter:card', content: 'summary_large_image' },
+                    { property: 'og:image', content: `${twitterCardURL}` },
+                    { property: 'og:title', content: 'Link-Packet' },
+                    { property: 'og:description', content: 'Share Your Book Marks!' },
+                    { property: 'og:url', content: `https://link-packet.web.app/` }
                 ]}
             />
             <AuthProvider>
@@ -37,7 +33,7 @@ const App: React.FC = () => {
                         <Route exact path={'/'} component={View}/>
                         <Redirect to={''}/>
                     </Switch>
-                    <Footer />
+                    <Footer/>
                 </Router>
             </AuthProvider>
         </>
