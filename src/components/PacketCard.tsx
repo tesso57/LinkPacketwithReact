@@ -23,7 +23,7 @@ const createTwitterUrl = (url: string) => {
 const onClickShareButton = (packetId: string) => () => {
     const link = 'https://link-packet.web.app/packet' + packetId;
     const twitterUrl = createTwitterUrl(link);
-    window.location.replace(twitterUrl);
+    window.open(twitterUrl, '_blank');
 };
 
 const getFaviconUrl = (url: string) => {
