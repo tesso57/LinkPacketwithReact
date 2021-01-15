@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {RouteComponentProps} from "react-router";
 import {db} from '../firebase';
-import {Packet,URL} from "../utils/types";
+import {Packet,URL,User} from "../utils/types";
 import {Container, IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
 import {useHistory} from "react-router-dom";
@@ -10,8 +10,18 @@ import CopyToClipBoard from 'react-copy-to-clipboard';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import PageContainer from "../components/Layout/PageContainer"
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 
-
+const getFaviconUrl = (url: string) => {
+    if (url === '') return '';
+    const deletedHead =
+        url.replace('https://', '').replace('http://', '');
+    const index = deletedHead.indexOf('/');
+    const serviceUrl = deletedHead.substring(0, index);
+    return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
+};
 const onClickItem = (link: string) => () => window.location.replace(link);
 const head10 = (str: string) => {
     const words = 100
@@ -30,6 +40,10 @@ const head10 = (str: string) => {
     return result.join('') + '...';
 };
 
+const formatDate = (date :Date) => (
+    `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日に更新`
+)
+
 type Props = {
     url : URL;
     key : number;
@@ -40,6 +54,13 @@ const Bookmark :React.FC<Props> = (props) => {
     return (
         <Paper elevation={2}>
             <ListItem key={props.key} className={styles.list} button>
+                
+                {
+                     (getFaviconUrl(props.url.link) !== '') &&
+                    <ListItemAvatar>
+                        <Avatar alt="Favicon" src={getFaviconUrl(props.url.link)} />
+                    </ListItemAvatar>
+                }
                 <ListItemText primary={head10(props.url.title)} 
                              secondary={head10(props.url.link)}
                              primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
@@ -82,6 +103,7 @@ type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
 const PacketDetails: React.FC<UrlProps> = (props) => {
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
+    const [user, setUser] = useState<User | undefined>(undefined);
     const history = useHistory();
 
 
@@ -90,7 +112,13 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         const docRef = db.collection('packets').doc(props.match.params.packetId);
         docRef.get().then(doc => {
             if (doc.exists) {
-                setPacket(doc.data() as Packet)
+                const tmpPacket = doc.data() as Packet
+                setPacket(tmpPacket)
+                tmpPacket.userRef.get().then((userDoc) => {
+                    if(userDoc.exists){
+                        setUser(userDoc.data() as User)
+                    }
+                })
             } else {
                 history.push('/')
             }
@@ -100,9 +128,22 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     return (
         <PageContainer>
           <Container maxWidth={"md"}>
-              <h3>
+              
+              {
+                  user !== undefined && user.photoUrl !== null && 
+                  <div className={styles.userDataContainer}>
+                      <div className={styles.userNameContainer}>
+                        <Button href={`/users/${user.id}`}>
+                            <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
+                            <span className={styles.userName}>{user.displayName}</span> 
+                        </Button>
+                      </div>
+                    <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
+                  </div>
+              }
+              <h2>
                   {packet?.title}
-              </h3>
+              </h2>
               <List component={"nav"} className={styles.listContainer}>
                   {packet !== undefined && 
                       packet.urls.map((url, i) => (
