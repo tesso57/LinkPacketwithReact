@@ -90,6 +90,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
       await Promise.all([userPromise, deletePromise]);
     }
     infoCache = undefined;
+    saveCallback();
     history.push("/users/" + auth.currentUser?.id);
   };
 

@@ -78,7 +78,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
     <Container maxWidth="lg">
         { props.editable ? 
           <div>
-            <StyledTextField id="title" type="text" onChange={(e) => { onChange(e.target.value); props.save && props.save(); }} defaultValue={(props.packet !== undefined) ? props.packet.title : "untitled"} InputProps={{ endAdornment: <InputAdornment position="end">{props.message && ("- " + props.message)}</InputAdornment>}} />
+            <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? props.packet.title : "untitled"} InputProps={{ endAdornment: <InputAdornment position="end">{props.message && ("- " + props.message)}</InputAdornment>}} />
             { (props.packetErrorAlert !== undefined) ? <Alert severity="error">{props.packetErrorAlert}</Alert> : <></> }
           </div> :
           <h3>{ props.packet?.title }</h3>
