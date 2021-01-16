@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useContext, Suspense } from 'react';
+import React, { FC, useState, useEffect, useContext, Suspense, useCallback } from 'react';
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
@@ -54,7 +54,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
   const packetId = props.match.params.packetId;
   const history = useHistory();
   const [packet, setPacket] = useState<Packet | undefined>(undefined);
-  const [packetInfoAlert, setPacketInfoAlert] = useState<string | undefined>(undefined);
+  const [message, setMessage] = useState<string>('');
   const [packetErrorAlert, setPacketErrorAlert] = useState<string | undefined>(undefined);
   const [edited, setEdited] = useState<boolean>(false);
   const auth = useContext(AuthContext);
@@ -66,11 +66,14 @@ const EditPacketPage: FC<urlProps> = (props) => {
       setPacketErrorAlert("No bookmarks have been added!");
       return;
     }
+    setMessage("auto save in progress...");
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
-    setPacketInfoAlert("Packet has been saved successfully!");
+    setPacketErrorAlert(undefined);
+    setMessage("saved successfully!");
     setEdited(true);
   };
+  const saveCallback = useCallback(save, [packet, packetId]);
 
   const goMyPage = async () => {
     if(!edited) {
@@ -86,6 +89,8 @@ const EditPacketPage: FC<urlProps> = (props) => {
       const deletePromise = docRef.delete();
       await Promise.all([userPromise, deletePromise]);
     }
+    infoCache = undefined;
+    saveCallback();
     history.push("/users/" + auth.currentUser?.id);
   };
 
@@ -93,15 +98,16 @@ const EditPacketPage: FC<urlProps> = (props) => {
     if(info.packet === undefined) history.push('/');
     else if(info.packetOwner === undefined || info.packetOwner.id !== auth.currentUser?.id) history.push('/packet/' + packetId);
     else {
+      saveCallback();
       if(info.packet.urls.length !== 0) setEdited(true);
       setPacket(info.packet);
     }
-  }, [info, packetId, auth.currentUser?.id, history]);
+  }, [info, packetId, auth.currentUser?.id, history, saveCallback]);
 
   return (
     <PageContainer>
       <Button size="large" startIcon={<KeyboardReturnIcon />} onClick={goMyPage}>マイページに戻る</Button>
-      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} packetInfoAlert={packetInfoAlert} setPacketInfoAlert={setPacketInfoAlert} packetErrorAlert={packetErrorAlert} setPacketErrorAlert={setPacketErrorAlert} editable /> : <></> }
+      { (packet !== undefined) ? <BookmarkList packet={packet} save={saveCallback} message={message} onChange={setPacket} packetErrorAlert={packetErrorAlert} setPacketErrorAlert={setPacketErrorAlert} editable /> : <></> }
     </PageContainer>
   );
 };

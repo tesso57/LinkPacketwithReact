@@ -3,7 +3,7 @@ import {Packet} from "../utils/types";
 import {db} from "../firebase";
 import PacketCardList from "../components/PacketCardList";
 import PageContainer from '../components/Layout/PageContainer';
-
+import styles from './View.module.scss'
 
 const View: React.FC = () => {
   const [packets, setPackets] = useState<Packet[] | undefined>(undefined);
@@ -16,6 +16,7 @@ const View: React.FC = () => {
     }, []);
   return (
     <PageContainer>
+      <h1 className={styles.title}>最近のパケット</h1>
       <PacketCardList packets={packets ?? new Array<Packet>()}/>
     </PageContainer>
   );
