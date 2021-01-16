@@ -68,8 +68,8 @@ const EditPacketPage: FC<urlProps> = (props) => {
     }
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
-    setPacketInfoAlert("Packet has been saved successfully!");
     setPacketErrorAlert(undefined);
+    setPacketInfoAlert("Packet has been saved successfully!");
     setEdited(true);
   };
 
@@ -87,6 +87,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
       const deletePromise = docRef.delete();
       await Promise.all([userPromise, deletePromise]);
     }
+    infoCache = undefined;
     history.push("/users/" + auth.currentUser?.id);
   };
 
