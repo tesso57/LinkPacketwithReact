@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../../utils/auth/AuthProvider';
 import {Toolbar, Button, IconButton} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
@@ -20,7 +20,7 @@ const StyledButton = withStyles({
 })(Button);
 
 const Header: React.FC = () => {
-    const {currentUser,login,logout} = useContext(AuthContext)
+    const {currentUser, login, logout} = useContext(AuthContext)
     const history = useHistory();
     const location = useLocation();
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -37,14 +37,20 @@ const Header: React.FC = () => {
     };
 
     const handleClose = (path: string) => () => {
+        if (path === 'needsignin') {
+            login();
+            return
+        }
         setAnchorEl(null);
         history.push(path);
     };
 
     const createPathFromOption = (option: string) => {
         if (option === 'トップページ') return '/';
-        if (option === 'マイページ') return `/users/${currentUser?.id}`;
-        else return ''
+        if (option === 'マイページ') {
+            if(currentUser === null) return 'needsignin';
+             return `/users/${currentUser.id}`;
+        } else return ''
     };
 
     useEffect(() => {
@@ -83,7 +89,8 @@ const Header: React.FC = () => {
                         }}
                     >
                         {options.map((option) => (
-                            <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose(createPathFromOption(option))}>
+                            <MenuItem key={option} selected={option === 'Pyxis'}
+                                      onClick={handleClose(createPathFromOption(option))}>
                                 {option}
                             </MenuItem>
                         ))}
@@ -99,8 +106,9 @@ const Header: React.FC = () => {
                                 <StyledButton className={styles.HeaderButton} variant="contained"
                                               onClick={() => setIsDialogOpen(true)}
                                               disableElevation>SIGNOUT</StyledButton> :
-                                <IconButton onClick={() => history.push(`/users/${currentUser.id}`)} >
-                                    <img src={currentUser.photoUrl || ""} alt="user-icon" className={styles.HeaderIcon}/>
+                                <IconButton onClick={() => history.push(`/users/${currentUser.id}`)}>
+                                    <img src={currentUser.photoUrl || ""} alt="user-icon"
+                                         className={styles.HeaderIcon}/>
                                 </IconButton>
                     }
                 </div>
