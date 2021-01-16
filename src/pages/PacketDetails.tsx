@@ -138,12 +138,14 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
 
     const checkSubscribed = useCallback((packetId : string) => {
         if(currentUser === null) return true;
+        if(packetId.length < 19) return true;
         const packetRef = db.collection("packets").doc(packetId)
         return currentUser.subscribePacketRefs.filter((val) => (val.isEqual(packetRef))).length > 0
     },[currentUser]);
 
     const subscribePacket = async (packetId : string) => {
         if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        if(packetId.length < 19) return
         const newSubscribePacketRef = db.collection('packets').doc(packetId);
         await currentUserRef.update({
             subscribePacketRefs : [...currentUser.subscribePacketRefs, newSubscribePacketRef]
@@ -161,6 +163,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
 
     const stopSubscribePacket = async (packetId : string) => {
         if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        if(packetId.length < 19) return
         const stopSubscribePacketRef = db.collection('packets').doc(packetId);
 
         //ユーザーのパケットレフを消す
@@ -180,6 +183,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     }
     const deletePackets = async () => {
         if (deleteTarget === '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
+        if(deleteTarget.length < 19) return
         //パケットを消す
         const docRef = db.collection('packets').doc(deleteTarget);
         await docRef.delete().catch((err) => console.log(err));
@@ -203,6 +207,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
 
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
+        if (props.match.params.packetId.length < 19) return;
         const docRef = db.collection('packets').doc(props.match.params.packetId);
         docRef.get().then(doc => {
             if (doc.exists) {

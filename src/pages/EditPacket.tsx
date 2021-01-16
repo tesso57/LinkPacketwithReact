@@ -11,7 +11,10 @@ import { AuthContext } from '../utils/auth/AuthProvider';
 
 type urlProps = {} & RouteComponentProps<{packetId : string}>;
 
-const fetchPacket = (packetId: string) => db.collection('packets').doc(packetId).get();
+const fetchPacket = (packetId: string) => {
+  if(packetId.length < 19) return
+  return db.collection('packets').doc(packetId).get()
+}
 
 type InfoType = {
   packet: Packet | undefined,
@@ -67,6 +70,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
       return;
     }
     setMessage("auto save in progress...");
+    if(packetId.length < 19) return
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
     setPacketErrorAlert(undefined);
@@ -77,6 +81,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
 
   const goMyPage = async () => {
     if(!edited) {
+      if(packetId.length < 19) return
       const docRef = db.collection('packets').doc(packetId);
       const userPromise = auth.currentUserRef?.get().then(async (doc) => {
         if(doc.exists) {
