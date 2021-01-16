@@ -69,6 +69,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
     setPacketInfoAlert("Packet has been saved successfully!");
+    setPacketErrorAlert(undefined);
     setEdited(true);
   };
 
