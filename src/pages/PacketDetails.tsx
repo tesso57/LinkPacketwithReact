@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {RouteComponentProps} from "react-router";
 import {db} from '../firebase';
 import {Packet,URL,User} from "../utils/types";
-import {Container, IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
+import { IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
 import {useHistory} from "react-router-dom";
 import AssignmentIcon from '@material-ui/icons/Assignment';
@@ -13,6 +13,8 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
 
 const getFaviconUrl = (url: string) => {
     if (url === '') return '';
@@ -53,7 +55,7 @@ type Props = {
 const Bookmark :React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false)
     return (
-        <Paper elevation={2}>
+        <Paper elevation={2} style={{marginLeft:`1rem`,marginRight:`1rem`}}>
             <ListItem key={props.key} className={styles.list} button>
                 {
                      (getFaviconUrl(props.url.link) !== '') &&
@@ -127,32 +129,37 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
 
     return (
         <PageContainer>
-          <Container maxWidth={"md"}>
-              
-              {
-                  user !== undefined && user.photoUrl !== null && 
-                  <div className={styles.userDataContainer}>
-                      <div className={styles.userNameContainer}>
-                        <Button href={`/users/${user.id}`}>
-                            <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
-                            <span className={styles.userName}>{user.displayName}</span> 
-                        </Button>
-                      </div>
-                    <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
-                  </div>
-              }
-              <h2>
-                  {packet?.title}
-              </h2>
-              <List component={"nav"} className={styles.listContainer}>
-                  {packet !== undefined && 
-                      packet.urls.map((url, i) => (
-                          <Bookmark url={url} key={i}/>
-                      ))
-                  }
-              </List>
-           </Container>
-         </PageContainer>
+            {
+                user !== undefined && user.photoUrl !== null && 
+                <div className={styles.userDataContainer}>
+                    <div className={styles.userNameContainer}>
+                    <Button href={`/users/${user.id}`}>
+                        <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
+                        <span className={styles.userName}>{user.displayName}</span> 
+                    </Button>
+                    </div>
+                <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
+                </div>
+            }
+            <div　className={styles.titleContainer}>
+                <h2 className={styles.title}>
+                    {packet?.title}
+                </h2>
+                    <IconButton aria-label="settings" style={{marginTop:`auto`,marginBottom:`auto`}}>
+                        <MoreVertIcon />
+                    </IconButton>
+                
+            </div>
+            
+            <List component={"nav"} className={styles.listContainer}>
+                {
+                    packet !== undefined && 
+                        packet.urls.map((url, i) => (
+                            <Bookmark url={url} key={i}/>
+                        ))
+                }
+            </List>
+        </PageContainer>
     )
 };
 
