@@ -101,6 +101,7 @@ const Users : React.FC<urlProps> = (props) => {
             setCurrentUser(newCurrentUser);
             history.push(`/edit/${docRef.id}`);
         })
+    }
 
     return(
         <PageContainer>
