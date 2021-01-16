@@ -114,7 +114,7 @@ const PacketCard: FC<Props> = (props) => {
                         }
                         className={styles.CardHeader}
                         title={
-                            <Button  onClick={() => history.push(`/packets/${props.packet.id}`)}>
+                            <Button  onClick={() => history.push(`/packets/${props.packet.id}`)} style={{textTransform:'none'}}>
                                 <span className={styles.title}>{head10(props.packet.title)}</span>
                             </Button>
                             
