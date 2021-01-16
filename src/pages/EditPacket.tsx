@@ -66,8 +66,6 @@ const EditPacketPage: FC<urlProps> = (props) => {
       setPacketErrorAlert("No bookmarks have been added!");
       return;
     }
-    console.log("----save-----")
-    console.trace()
     setMessage("auto save in progress...");
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);

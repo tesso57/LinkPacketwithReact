@@ -65,7 +65,6 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const changeTitle = (newTitle: string) => setTitle(newTitle);
   const changeUrl = (newUrl: string) => setUrl(newUrl);
   const mergeURL = (index: number, newUrl: URL) => {
-    console.log("merge")
     const newPacket: Packet = props.packet;
     newPacket.urls[index] = newUrl;
     newPacket.postedDate = firebase.firestore.Timestamp.now();
