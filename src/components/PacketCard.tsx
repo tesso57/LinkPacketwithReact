@@ -148,20 +148,20 @@ const PacketCard: FC<Props> = (props) => {
                 >
                 <CopyToClipBoard text={`https://link-packet.web.app/packets/${props.packet.id}`} >
                     <MenuItem onClick={handleClose}>
-                        <FileCopyIcon/> パケットリンクをコピー 
+                        <FileCopyIcon style={{marginRight:`1rem`}}/> パケットのリンクをコピー 
                     </MenuItem>
                 </CopyToClipBoard>
-                <MenuItem onClick={onClickShareButton(props.packet.id)}> <TwitterIcon/> ツイート </MenuItem>
+                <MenuItem onClick={onClickShareButton(props.packet.id)}> <TwitterIcon style={{marginRight:`1rem`}}/> ツイート </MenuItem>
                 {
                     (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                     <>
-                        <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon/> パケットを編集 </MenuItem>
+                        <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon style={{marginRight:`1rem`}}/> パケットを編集 </MenuItem>
                         <MenuItem onClick={() => 
                         {
                             handleClose()
                             props.setDeleteTarget(props.packet.id)
                             props.setIsDialogOpen(true)
-                        }}> <DeleteIcon/> パケット削除</MenuItem>
+                        }}> <DeleteIcon style={{marginRight:`1rem`}}/> パケットを削除</MenuItem>
                     </>
                 }
             </Menu>
