@@ -1,4 +1,4 @@
-import React, {FC, Suspense, useEffect, useState, useContext} from 'react';
+import React, {FC, Suspense, useEffect, useState, useContext,useCallback} from 'react';
 import {
     Card,
     CardActionArea,
@@ -22,6 +22,10 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import { AuthContext } from '../utils/auth/AuthProvider';
 import CopyToClipBoard from 'react-copy-to-clipboard';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import { db } from "../firebase";
+
 
 
 const createTwitterUrl = (url: string) => {
@@ -78,7 +82,7 @@ const PacketCard: FC<Props> = (props) => {
     const [faviconUrls, setFaviconUrls] = useState<string[] | undefined>(undefined);
     const [user,setUser] = useState<User |undefined>(undefined);
     const [anchor, setAnchor] = useState<HTMLAnchorElement | null>(null);
-    const {currentUser} = useContext(AuthContext);
+    const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
 
     const handleClick = (event?: React.BaseSyntheticEvent) => {
         if(event === undefined) return;
@@ -87,6 +91,49 @@ const PacketCard: FC<Props> = (props) => {
 
     const handleClose = () => {
         setAnchor(null);
+    }
+
+    const checkSubscribed = useCallback((packetId : string) => {
+        if(currentUser === null) return true;
+        const packetRef = db.collection("packets").doc(packetId)
+        return currentUser.subscribePacketRefs.filter((val) => (val.isEqual(packetRef))).length > 0
+    },[currentUser]);
+
+    const subscribePacket = async (packetId : string) => {
+        if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        const newSubscribePacketRef = db.collection('packets').doc(packetId);
+        await currentUserRef.update({
+            subscribePacketRefs : [...currentUser.subscribePacketRefs, newSubscribePacketRef]
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+            id : currentUser.id,
+            packetRefs : currentUser.packetRefs,
+            subscribePacketRefs: [...currentUser.subscribePacketRefs, newSubscribePacketRef],
+            displayName: currentUser.displayName,
+            photoUrl: currentUser.photoUrl
+        }
+        setCurrentUser(newCurrentUser);
+    }
+
+    const stopSubscribePacket = async (packetId : string) => {
+        if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        const stopSubscribePacketRef = db.collection('packets').doc(packetId);
+
+        //ユーザーのパケットレフを消す
+        const deletedSubscribeRefs = currentUser.subscribePacketRefs.filter((val) => (!val.isEqual(stopSubscribePacketRef)));
+        await currentUserRef.update({
+            subscribePacketRefs : deletedSubscribeRefs
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+            id : currentUser.id,
+            packetRefs : currentUser.packetRefs,
+            subscribePacketRefs: deletedSubscribeRefs,
+            displayName: currentUser.displayName,
+            photoUrl: currentUser.photoUrl
+        }
+        setCurrentUser(newCurrentUser);
     }
 
     useEffect(() => {
@@ -175,6 +222,22 @@ const PacketCard: FC<Props> = (props) => {
                             <span className={styles.warning}>パケットを削除</span>
                         </MenuItem>
                     </>
+                }
+
+                {
+                    (user !== undefined && currentUser !== null && user.id !== currentUser.id)?(
+                        checkSubscribed(props.packet.id) ? (
+                            <MenuItem onClick={() => stopSubscribePacket(props.packet.id)}>
+                                <BookmarkIcon style={Normal} className={styles.gray}/> リンクをやめる
+                            </MenuItem>
+                            ) : (
+                            <MenuItem onClick={() => subscribePacket(props.packet.id)}>
+                                <BookmarkBorderIcon style={Normal} className={styles.gray}/> リンクする
+                            </MenuItem>
+                            )
+                    ):(
+                        <></>
+                    )
                 }
             </Menu>
         </Card>
