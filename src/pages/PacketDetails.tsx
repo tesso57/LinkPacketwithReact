@@ -18,18 +18,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import YesNoDialog from '../components/Layout/YesNoDialog'
 
-const createTwitterUrl = (url: string) => {
-    const shareText = 'おすすめのパケットを共有します！';
-    const hashTag = 'linkpacket';
-    return `https://twitter.com/intent/tweet?text=${shareText + '%0a'}&url=${url}&hashtags=${hashTag}`
-};
-
-const onClickShareButton = (packetId: string | undefined) => () => {
-    if(packetId === undefined) return;
-    const link = 'https://link-packet.web.app/packets/' + packetId;
-    const twitterUrl = createTwitterUrl(link);
-    window.open(twitterUrl, '_blank');
-};
 
 const getFaviconUrl = (url: string) => {
     if (url === '') return '';
@@ -73,23 +61,23 @@ const Bookmark :React.FC<Props> = (props) => {
         <Paper elevation={2} style={{marginLeft:`1rem`,marginRight:`1rem`}}>
             <ListItem key={props.key} className={styles.list} button>
                 {
-                     (getFaviconUrl(props.url.link) !== '') &&
+                    (getFaviconUrl(props.url.link) !== '') &&
                     <ListItemAvatar>
                         <Avatar alt="Favicon" src={getFaviconUrl(props.url.link)} />
                     </ListItemAvatar>
                 }
-                <ListItemText primary={head10(props.url.title)} 
-                             secondary={head10(props.url.link)}
-                             primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
-                             secondaryTypographyProps={{ style: { wordWrap: `break-word` }}}
-                             onClick={onClickItem(props.url.link)}/>
+                <ListItemText primary={head10(props.url.title)}
+                              secondary={head10(props.url.link)}
+                              primaryTypographyProps={{ style: { wordWrap: `break-word` }}}
+                              secondaryTypographyProps={{ style: { wordWrap: `break-word` }}}
+                              onClick={onClickItem(props.url.link)}/>
                 <ListItemSecondaryAction>
                     <ClickAwayListener onClickAway={() => setOpen(false)}>
                         <div >
                             <Tooltip
                                 PopperProps={{
                                     disablePortal: true,
-                            }}
+                                }}
                                 arrow
                                 open={open}
                                 onClose={() => setOpen(false)}
@@ -99,14 +87,14 @@ const Bookmark :React.FC<Props> = (props) => {
                                 disableTouchListener
                                 title='URL Copied!'
                             >
-                                    <CopyToClipBoard text={props.url.link} >
-                                        <IconButton
-                                            onClick={ () => setOpen(true)}
-                                            edge="end"
-                                        >
-                                            <AssignmentIcon />
-                                        </IconButton>
-                                    </CopyToClipBoard>
+                                <CopyToClipBoard text={props.url.link} >
+                                    <IconButton
+                                        onClick={ () => setOpen(true)}
+                                        edge="end"
+                                    >
+                                        <AssignmentIcon />
+                                    </IconButton>
+                                </CopyToClipBoard>
                             </Tooltip>
                         </div>
                     </ClickAwayListener>
@@ -135,6 +123,19 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     const handleClose = () => {
         setAnchor(null);
     }
+
+    const createTwitterUrl = (url: string) => {
+        const shareText = `${packet?.title}`;
+        const hashTag = 'linkpacket';
+        return `https://twitter.com/intent/tweet?text=${shareText + '%0a'}&url=${url}&hashtags=${hashTag}`
+    };
+
+    const onClickShareButton = (packetId: string | undefined) => () => {
+        if(packetId === undefined) return;
+        const link = 'https://link-packet.web.app/packets/' + packetId;
+        const twitterUrl = createTwitterUrl(link);
+        window.open(twitterUrl, '_blank');
+    };
 
     const checkSubscribed = useCallback((packetId : string) => {
         if(currentUser === null) return true;
@@ -195,15 +196,15 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         })
         //カレントユーザーをアップデート
         const newCurrentUser: User = {
-                    id : currentUser.id,
-                    packetRefs : deletedUserRefs,
-                    subscribePacketRefs: currentUser.subscribePacketRefs,
-                    displayName: currentUser.displayName,
-                    photoUrl: currentUser.photoUrl
-                }
+            id : currentUser.id,
+            packetRefs : deletedUserRefs,
+            subscribePacketRefs: currentUser.subscribePacketRefs,
+            displayName: currentUser.displayName,
+            photoUrl: currentUser.photoUrl
+        }
         setCurrentUser(newCurrentUser);
         window.location.reload();
-      };
+    };
 
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
@@ -230,33 +231,33 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
     return (
         <PageContainer>
             {
-                user !== undefined && user.photoUrl !== null && 
+                user !== undefined && user.photoUrl !== null &&
                 <div className={styles.userDataContainer}>
                     <div className={styles.userNameContainer}>
-                    <Button href={`/users/${user.id}`}>
-                        <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
-                        <span className={styles.userName}>{user.displayName}</span> 
-                    </Button>
+                        <Button href={`/users/${user.id}`}>
+                            <Avatar alt="user" src={user.photoUrl} style={{marginRight:`1.5rem`}}/>
+                            <span className={styles.userName}>{user.displayName}</span>
+                        </Button>
                     </div>
-                <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
+                    <span className={styles.date}>{formatDate(packet?.postedDate.toDate())}</span>
                 </div>
             }
             <div　className={styles.titleContainer}>
                 <h2 className={styles.title}>
                     {packet?.title}
                 </h2>
-                    <IconButton aria-label="settings" style={{marginTop:`auto`,marginBottom:`auto`}} onClick={handleClick}>
-                        <MoreVertIcon />
-                    </IconButton>
-                
+                <IconButton aria-label="settings" style={{marginTop:`auto`,marginBottom:`auto`}} onClick={handleClick}>
+                    <MoreVertIcon />
+                </IconButton>
+
             </div>
-            
+
             <List component={"nav"} className={styles.listContainer}>
                 {
-                    packet !== undefined && 
-                        packet.urls.map((url, i) => (
-                            <Bookmark url={url} key={i}/>
-                        ))
+                    packet !== undefined &&
+                    packet.urls.map((url, i) => (
+                        <Bookmark url={url} key={i}/>
+                    ))
                 }
 
                 <Menu
@@ -265,49 +266,49 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                     keepMounted
                     open={Boolean(anchor)}
                     onClose={handleClose}
-                    >
+                >
                     <CopyToClipBoard text={`https://link-packet.web.app/packets/${packet?.id}`} >
                         <MenuItem onClick={handleClose}>
-                            <FileCopyIcon style={Normal} className={styles.gray}/> パケットのリンクをコピー 
+                            <FileCopyIcon style={Normal} className={styles.gray}/> パケットのリンクをコピー
                         </MenuItem>
                     </CopyToClipBoard>
-                    <MenuItem onClick={onClickShareButton(packet?.id)}> 
-                        <TwitterIcon style={Normal} className={styles.twitter}/> 
+                    <MenuItem onClick={onClickShareButton(packet?.id)}>
+                        <TwitterIcon style={Normal} className={styles.twitter}/>
                         <span className={styles.twitter}>tweet</span>
                     </MenuItem>
-                        {
-                            (packet !== undefined && user !== undefined && currentUser !== null && user.id === currentUser.id) &&
-                            <>
-                                <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}>
-                                    <EditIcon style={Normal} className={styles.gray}/> パケットを編集 
-                                </MenuItem>
-                                <MenuItem onClick={() => 
-                                {
-                                    handleClose()
-                                    setDeleteTarget(packet.id)
-                                    setIsDialogOpen(true)
-                                }}> 
-                                    <DeleteIcon style={Normal} className={styles.warning}/>
-                                    <span className={styles.warning}>パケットを削除</span>
-                                </MenuItem>
-                            </>
-                        }
+                    {
+                        (packet !== undefined && user !== undefined && currentUser !== null && user.id === currentUser.id) &&
+                        <>
+                            <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}>
+                                <EditIcon style={Normal} className={styles.gray}/> パケットを編集
+                            </MenuItem>
+                            <MenuItem onClick={() =>
+                            {
+                                handleClose()
+                                setDeleteTarget(packet.id)
+                                setIsDialogOpen(true)
+                            }}>
+                                <DeleteIcon style={Normal} className={styles.warning}/>
+                                <span className={styles.warning}>パケットを削除</span>
+                            </MenuItem>
+                        </>
+                    }
 
-                        {
-                            (packet !== undefined && user !== undefined && currentUser !== null && user.id !== currentUser.id)?(
-                                checkSubscribed(packet.id) ? (
-                                    <MenuItem onClick={() => stopSubscribePacket(packet.id)}>
-                                        <BookmarkIcon style={Normal} className={styles.gray}/> リンクをやめる
-                                    </MenuItem>
-                                    ) : (
-                                    <MenuItem onClick={() => subscribePacket(packet.id)}>
-                                        <BookmarkBorderIcon style={Normal} className={styles.gray}/> リンクする
-                                    </MenuItem>
-                                    )
-                            ):(
-                                <></>
+                    {
+                        (packet !== undefined && user !== undefined && currentUser !== null && user.id !== currentUser.id)?(
+                            checkSubscribed(packet.id) ? (
+                                <MenuItem onClick={() => stopSubscribePacket(packet.id)}>
+                                    <BookmarkIcon style={Normal} className={styles.gray}/> リンクをやめる
+                                </MenuItem>
+                            ) : (
+                                <MenuItem onClick={() => subscribePacket(packet.id)}>
+                                    <BookmarkBorderIcon style={Normal} className={styles.gray}/> リンクする
+                                </MenuItem>
                             )
-                        }
+                        ):(
+                            <></>
+                        )
+                    }
                 </Menu>
             </List>
             <YesNoDialog msg={'パケットを削除しますか？'} isOpen={isDialogOpen} doYes={deletePackets}

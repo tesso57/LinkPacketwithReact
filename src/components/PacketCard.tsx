@@ -26,51 +26,6 @@ import BookmarkIcon from '@material-ui/icons/Bookmark';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import { db } from "../firebase";
 
-
-
-const createTwitterUrl = (url: string) => {
-    const shareText = 'おすすめのパケットを共有します！';
-    const hashTag = 'linkpacket';
-    return `https://twitter.com/intent/tweet?text=${shareText + '%0a'}&url=${url}&hashtags=${hashTag}`
-};
-
-const onClickShareButton = (packetId: string) => () => {
-    const link = 'https://link-packet.web.app/packets/' + packetId;
-    const twitterUrl = createTwitterUrl(link);
-    window.open(twitterUrl, '_blank');
-};
-
-const getFaviconUrl = (url: string) => {
-    if (url === '') return '';
-    const deletedHead =
-        url.replace('https://', '').replace('http://', '');
-    const index = deletedHead.indexOf('/');
-    const serviceUrl = deletedHead.substring(0, index);
-    return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
-};
-
-const head10 = (str: string) => {
-    const words = 15
-    const head20 = str.substr(0, words);
-    const result = new Array<string>();
-    let pos = 0;
-    const toNumbers: number[] = head20.split('').map(char => {
-        if (char.match(/[ -~]/)) return 1;
-        else return 2;
-    });
-    if (toNumbers.reduce((sum, num) => sum += num, 0) < words) return head20;
-    toNumbers.forEach((num, index) => {
-        pos += num;
-        if (pos <= words) result.push(head20[index])
-    });
-    return result.join('') + '...';
-};
-
-
-const getUserPhoto = (url : string | null) => (
-    url === null ? '' : url
-)
-
 type Props = {
     packet : Packet;
     setDeleteTarget : React.Dispatch<React.SetStateAction<string>>;
@@ -137,6 +92,50 @@ const PacketCard: FC<Props> = (props) => {
         }
         setCurrentUser(newCurrentUser);
     }
+
+    const createTwitterUrl = (url: string) => {
+        const shareText = `${props.packet.title}`;
+        const hashTag = 'linkpacket';
+        return `https://twitter.com/intent/tweet?text=${shareText + '%0a'}&url=${url}&hashtags=${hashTag}`
+    };
+
+    const onClickShareButton = (packetId: string) => () => {
+        const link = 'https://link-packet.web.app/packets/' + packetId;
+        const twitterUrl = createTwitterUrl(link);
+        window.open(twitterUrl, '_blank');
+    };
+
+    const getFaviconUrl = (url: string) => {
+        if (url === '') return '';
+        const deletedHead =
+            url.replace('https://', '').replace('http://', '');
+        const index = deletedHead.indexOf('/');
+        const serviceUrl = deletedHead.substring(0, index);
+        return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
+    };
+
+    const head10 = (str: string) => {
+        const words = 15
+        const head20 = str.substr(0, words);
+        const result = new Array<string>();
+        let pos = 0;
+        const toNumbers: number[] = head20.split('').map(char => {
+            if (char.match(/[ -~]/)) return 1;
+            else return 2;
+        });
+        if (toNumbers.reduce((sum, num) => sum += num, 0) < words) return head20;
+        toNumbers.forEach((num, index) => {
+            pos += num;
+            if (pos <= words) result.push(head20[index])
+        });
+        return result.join('') + '...';
+    };
+
+
+    const getUserPhoto = (url : string | null) => (
+        url === null ? '' : url
+    )
+
 
     useEffect(() => {
         const tempFaviconUrls = new Array<string>();
