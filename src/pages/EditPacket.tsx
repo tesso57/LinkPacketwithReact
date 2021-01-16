@@ -72,13 +72,12 @@ const EditPacketPage: FC<urlProps> = (props) => {
     if(packet.urls.length !== 0) setPacketErrorAlert(undefined);
     setMessage("saved successfully!");
     setEdited(true);
-    infoCache = { packet: packet, packetOwner: info.packetOwner } as InfoType;
   };
-  const saveCallback = useCallback(save, [packet, packetId, info]);
+  const saveCallback = useCallback(save, [packet, packetId]);
 
   const goMyPage = async () => {
     if(!edited) {
-      if(packetId.length < 19) return
+      if(packetId.length < 19) return;
       const docRef = db.collection('packets').doc(packetId);
       const userPromise = auth.currentUserRef?.get().then(async (doc) => {
         if(doc.exists) {
@@ -91,8 +90,8 @@ const EditPacketPage: FC<urlProps> = (props) => {
       const deletePromise = docRef.delete();
       await Promise.all([userPromise, deletePromise]);
     }
+    await saveCallback();
     infoCache = undefined;
-    saveCallback();
     history.push("/users/" + auth.currentUser?.id);
   };
 
@@ -102,9 +101,9 @@ const EditPacketPage: FC<urlProps> = (props) => {
     else {
       saveCallback();
       if(info.packet.urls.length !== 0) setEdited(true);
-      setPacket(info.packet);
+      if(packet === undefined) setPacket(info.packet);
     }
-  }, [info, packetId, auth.currentUser?.id, history, saveCallback]);
+  }, [info, packet, packetId, auth.currentUser?.id, history, saveCallback]);
 
   return (
     <PageContainer>
