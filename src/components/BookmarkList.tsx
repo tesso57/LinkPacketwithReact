@@ -30,7 +30,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const onChange = (newTitle: string) => {
     const newPacket: Packet = props.packet;
     newPacket.title = newTitle;
-    if(props.onChange !== undefined) props.onChange(newPacket);
+    props.onChange && props.onChange(newPacket);
   };
   const [title, setTitle] = useState<string>('');
   const [url, setUrl] = useState<string>('');
