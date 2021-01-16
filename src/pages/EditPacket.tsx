@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useContext, Suspense } from 'react';
 import { RouteComponentProps } from "react-router";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { Button } from '@material-ui/core';
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
@@ -54,29 +54,54 @@ const EditPacketPage: FC<urlProps> = (props) => {
   const packetId = props.match.params.packetId;
   const history = useHistory();
   const [packet, setPacket] = useState<Packet | undefined>(undefined);
-  const [packetAlert, setPacketAlert] = useState<string | undefined>(undefined);
+  const [packetInfoAlert, setPacketInfoAlert] = useState<string | undefined>(undefined);
+  const [packetErrorAlert, setPacketErrorAlert] = useState<string | undefined>(undefined);
+  const [edited, setEdited] = useState<boolean>(false);
   const auth = useContext(AuthContext);
   const info: InfoType = getInfo(packetId);
 
   const save = async () => {
     if(packet === undefined) return;
+    else if(packet.urls.length === 0) {
+      setPacketErrorAlert("No bookmarks have been added!");
+      return;
+    }
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
-    setPacketAlert("Packet has been saved successfully!");
+    setPacketInfoAlert("Packet has been saved successfully!");
+    setEdited(true);
+  };
+
+  const goMyPage = async () => {
+    if(!edited) {
+      const docRef = db.collection('packets').doc(packetId);
+      const userPromise = auth.currentUserRef?.get().then(async (doc) => {
+        if(doc.exists) {
+          const user = doc.data() as User;
+          user.packetRefs = user.packetRefs.filter((packetRef) => packetRef.id !== docRef.id);
+          await auth.currentUserRef?.update(user);
+          if(auth.setCurrentUser !== undefined) auth.setCurrentUser(user);
+        }
+      });
+      const deletePromise = docRef.delete();
+      await Promise.all([userPromise, deletePromise]);
+    }
+    history.push("/users/" + auth.currentUser?.id);
   };
 
   useEffect(() => {
     if(info.packet === undefined) history.push('/');
     else if(info.packetOwner === undefined || info.packetOwner.id !== auth.currentUser?.id) history.push('/packet/' + packetId);
-    else setPacket(info.packet);
+    else {
+      if(info.packet.urls.length !== 0) setEdited(true);
+      setPacket(info.packet);
+    }
   }, [info, packetId, auth.currentUser?.id, history]);
 
   return (
     <PageContainer>
-      <Link to={"/users/" + auth.currentUser?.id}>
-        <Button size="large" startIcon={<KeyboardReturnIcon />}>マイページに戻る</Button>
-      </Link>
-      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} packetAlert={packetAlert} setPacketAlert={setPacketAlert} editable /> : <></> }
+      <Button size="large" startIcon={<KeyboardReturnIcon />} onClick={goMyPage}>マイページに戻る</Button>
+      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} onChange={setPacket} packetInfoAlert={packetInfoAlert} setPacketInfoAlert={setPacketInfoAlert} packetErrorAlert={packetErrorAlert} setPacketErrorAlert={setPacketErrorAlert} editable /> : <></> }
     </PageContainer>
   );
 };

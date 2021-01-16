@@ -17,7 +17,7 @@ const App: React.FC = () => {
                     <Switch>
                         <Route exact path={'/edit/:packetId'} component={EditPacket}/>
                         <Route exact path={'/users/:userId'} component={User}/>
-                        <Route exact path={'/packet/:packetId'} component={PacketDetails}/>
+                        <Route exact path={'/packets/:packetId'} component={PacketDetails}/>
                         <Route exact path={'/'} component={View}/>
                         <Redirect to={''}/>
                     </Switch>

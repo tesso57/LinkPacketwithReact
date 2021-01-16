@@ -54,7 +54,6 @@ const Bookmark :React.FC<Props> = (props) => {
     return (
         <Paper elevation={2}>
             <ListItem key={props.key} className={styles.list} button>
-                
                 {
                      (getFaviconUrl(props.url.link) !== '') &&
                     <ListItemAvatar>
