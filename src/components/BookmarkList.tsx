@@ -75,6 +75,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
     const newPacket: Packet = props.packet;
     newPacket.urls.splice(index, 1);
     if(props.onChange !== undefined) props.onChange(newPacket);
+    props.save && props.save();
     setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
   const [listItem, setListItem] = useState<JSX.Element[]>(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} save={props.save} deleteUrl={deleteUrl} editable />));
