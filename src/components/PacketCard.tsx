@@ -99,6 +99,10 @@ const PacketCard: FC<Props> = (props) => {
         })
         setFaviconUrls(tempFaviconUrls);
     }, [history, props.packet]);
+
+    const Normal = {
+        marginRight:`1rem`,
+    }
     return (
         <Card>
                 <CardHeader
@@ -148,20 +152,28 @@ const PacketCard: FC<Props> = (props) => {
                 >
                 <CopyToClipBoard text={`https://link-packet.web.app/packets/${props.packet.id}`} >
                     <MenuItem onClick={handleClose}>
-                        <FileCopyIcon style={{marginRight:`1rem`}}/> パケットのリンクをコピー 
+                        <FileCopyIcon style={Normal} className={styles.gray}/> パケットのリンクをコピー 
                     </MenuItem>
                 </CopyToClipBoard>
-                <MenuItem onClick={onClickShareButton(props.packet.id)}> <TwitterIcon style={{marginRight:`1rem`}}/> ツイート </MenuItem>
+                <MenuItem onClick={onClickShareButton(props.packet.id)}> 
+                    <TwitterIcon style={Normal} className={styles.twitter}/> 
+                    <span className={styles.twitter}>tweet</span>
+                </MenuItem>
                 {
                     (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                     <>
-                        <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}> <EditIcon style={{marginRight:`1rem`}}/> パケットを編集 </MenuItem>
+                        <MenuItem onClick={() => history.push(`/edit/${props.packet.id}`)}>
+                            <EditIcon style={Normal} className={styles.gray}/> パケットを編集 
+                        </MenuItem>
                         <MenuItem onClick={() => 
                         {
                             handleClose()
                             props.setDeleteTarget(props.packet.id)
                             props.setIsDialogOpen(true)
-                        }}> <DeleteIcon style={{marginRight:`1rem`}}/> パケットを削除</MenuItem>
+                        }}> 
+                            <DeleteIcon style={Normal} className={styles.warning}/>
+                            <span className={styles.warning}>パケットを削除</span>
+                        </MenuItem>
                     </>
                 }
             </Menu>
