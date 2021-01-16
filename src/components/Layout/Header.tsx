@@ -8,7 +8,6 @@ import {useHistory, useLocation} from 'react-router-dom';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 const StyledButton = withStyles({
     root: {
         margin: "0 0 0 auto",
