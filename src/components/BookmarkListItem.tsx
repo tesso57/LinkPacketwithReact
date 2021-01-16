@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Paper, ListItem, ListItemText, IconButton, Tooltip } from '@material-ui/core';
+import { Paper, ListItem, ListItemText, IconButton, Tooltip,ListItemAvatar,Avatar } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { URL } from '../utils/types/index';
@@ -13,6 +13,14 @@ type Props = {
   onChange?: (index: number, newUrl: URL) => void,
   save?: () => void,
   deleteUrl?: (index: number) => void
+};
+const getFaviconUrl = (url: string) => {
+  if (url === '') return '';
+  const deletedHead =
+      url.replace('https://', '').replace('http://', '');
+  const index = deletedHead.indexOf('/');
+  const serviceUrl = deletedHead.substring(0, index);
+  return `http://www.google.com/s2/favicons?domain=${serviceUrl}`
 };
 
 const useWindowDimensions = () => {
@@ -91,6 +99,12 @@ const BookmarkListItem: FC<Props> = (props) => {
   if(props.editable) return (
     <Paper elevation={2}>
       <ListItem className={styles.List}>
+      {
+                     (getFaviconUrl(url) !== '') &&
+                    <ListItemAvatar>
+                        <Avatar alt="Favicon" src={getFaviconUrl(url)} />
+                    </ListItemAvatar>
+                }
         <ListItemText primary={title} secondary={head(width, url)} />
         { props.editable ? (<>
           <Tooltip title="Edit" placement="top">

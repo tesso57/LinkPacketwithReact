@@ -31,6 +31,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const onChange = (newTitle: string) => {
     const newPacket: Packet = props.packet;
     newPacket.title = newTitle;
+    newPacket.postedDate = firebase.firestore.Timestamp.now();
     if(props.onChange !== undefined) props.onChange(newPacket);
   };
   const [title, setTitle] = useState<string>('');
@@ -51,6 +52,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
       else newUrl.title = "untitled";
     }
     const newPacket: Packet = props.packet;
+    newPacket.postedDate = firebase.firestore.Timestamp.now();
     newPacket.urls.push(newUrl);
     if(props.onChange !== undefined) props.onChange(newPacket);
     setAddFlag(false);
