@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Container, List, TextField, IconButton, Tooltip } from '@material-ui/core';
+import { Container, List, TextField, IconButton, Tooltip, InputAdornment } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import SaveIcon from '@material-ui/icons/Save';
 import { Alert } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import { Packet, URL } from '../utils/types/index';
@@ -12,10 +11,9 @@ import styles from './BookmarkList.module.scss';
 type Props = {
   packet: Packet,
   editable?: boolean,
+  message?: string,
   onChange?: React.Dispatch<React.SetStateAction<Packet | undefined>>,
   save?: () => void,
-  packetInfoAlert?: string,
-  setPacketInfoAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
   packetErrorAlert?: string,
   setPacketErrorAlert?: React.Dispatch<React.SetStateAction<string | undefined>>,
 };
@@ -55,7 +53,8 @@ const BookmarkList: FC<Props> = (props: Props) => {
     newPacket.urls.push(newUrl);
     if(props.onChange !== undefined) props.onChange(newPacket);
     setAddFlag(false);
-    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} save={props.save} deleteUrl={deleteUrl} editable />));
+    if(props.save !== undefined) props.save();
   };
   const cancel = () => {
     setAddFlag(false);
@@ -66,7 +65,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
     const newPacket: Packet = props.packet;
     newPacket.urls[index] = newUrl;
     if(props.onChange !== undefined) props.onChange(newPacket);
-    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
+    setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} save={props.save} deleteUrl={deleteUrl} editable />));
   };
   const deleteUrl = (index: number) => {
     const newPacket: Packet = props.packet;
@@ -74,30 +73,26 @@ const BookmarkList: FC<Props> = (props: Props) => {
     if(props.onChange !== undefined) props.onChange(newPacket);
     setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
-  const [listItem, setListItem] = useState<JSX.Element[]>(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
+  const [listItem, setListItem] = useState<JSX.Element[]>(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} save={props.save} deleteUrl={deleteUrl} editable />));
   return (
     <Container maxWidth="lg">
         { props.editable ? 
           <div>
-            <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? (props.packet.title === "") ? "Packet Title" : props.packet.title : "Packet Title"}/>
-            <Tooltip title="Add Bookmark" placement="top">
-              <IconButton aria-label="add" onClick={() => { setAddFlag(true); if(props.setPacketInfoAlert !== undefined) props.setPacketInfoAlert(undefined); if(props.setPacketErrorAlert !== undefined) props.setPacketErrorAlert(undefined); setTitle(''); setUrl(''); }}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Save Packet" placement="top">
-              <IconButton aria-label="save" onClick={(props.save !== undefined) ? props.save : () => {}}>
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-            { (props.packetInfoAlert !== undefined) ? <Alert severity="info">{props.packetInfoAlert}</Alert> : <></> }
+            <StyledTextField id="title" type="text" onChange={(e) => onChange(e.target.value)} defaultValue={(props.packet !== undefined) ? props.packet.title : "untitled"} InputProps={{ endAdornment: <InputAdornment position="end">{props.message && ("- " + props.message)}</InputAdornment>}} />
             { (props.packetErrorAlert !== undefined) ? <Alert severity="error">{props.packetErrorAlert}</Alert> : <></> }
           </div> :
           <h3>{ props.packet?.title }</h3>
         }
         <List component="nav" className={styles.Container}>
-            { listItem }
-            { addFlag ? <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} cancel={cancel} editAlert={editAlert} /> : <></> }
+          { listItem }
+          { addFlag ?
+            <EditBookmark changeTitle={changeTitle} changeUrl={changeUrl} add={add} cancel={cancel} editAlert={editAlert} /> :
+            <Tooltip title="Add Bookmark" placement="top">
+              <IconButton aria-label="add" style={{ margin: 'auto' }} onClick={() => { setAddFlag(true); if(props.setPacketErrorAlert !== undefined) props.setPacketErrorAlert(undefined); setTitle(''); setUrl(''); }}>
+                <AddIcon fontSize="large" />
+              </IconButton>
+            </Tooltip>
+          }
         </List>
     </Container>
   );
