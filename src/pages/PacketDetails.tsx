@@ -1,20 +1,35 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState,useContext,useCallback} from 'react'
 import {RouteComponentProps} from "react-router";
 import {db} from '../firebase';
+import { AuthContext } from '../utils/auth/AuthProvider';
 import {Packet,URL,User} from "../utils/types";
-import { IconButton, List, ListItem, ListItemText, Paper, Tooltip} from "@material-ui/core";
+import { IconButton, List, ListItem, ListItemText, Paper, Tooltip, Menu, MenuItem, Avatar,Button, ListItemAvatar,ListItemSecondaryAction,ClickAwayListener} from "@material-ui/core";
 import styles from './PacketDetails.module.scss';
 import {useHistory} from "react-router-dom";
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CopyToClipBoard from 'react-copy-to-clipboard';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import PageContainer from "../components/Layout/PageContainer"
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import YesNoDialog from './Layout/YesNoDialog'
 
+const createTwitterUrl = (url: string) => {
+    const shareText = 'おすすめのパケットを共有します！';
+    const hashTag = 'linkpacket';
+    return `https://twitter.com/intent/tweet?text=${shareText + '%0a'}&url=${url}&hashtags=${hashTag}`
+};
+
+const onClickShareButton = (packetId: string | undefined) => () => {
+    if(packetId === undefined) return;
+    const link = 'https://link-packet.web.app/packets/' + packetId;
+    const twitterUrl = createTwitterUrl(link);
+    window.open(twitterUrl, '_blank');
+};
 
 const getFaviconUrl = (url: string) => {
     if (url === '') return '';
@@ -104,10 +119,87 @@ const Bookmark :React.FC<Props> = (props) => {
 type UrlProps = {} & RouteComponentProps<{ packetId: string }>
 
 const PacketDetails: React.FC<UrlProps> = (props) => {
+    const history = useHistory();
     const [packet, setPacket] = useState<Packet | undefined>(undefined);
     const [user, setUser] = useState<User | undefined>(undefined);
-    const history = useHistory();
+    const [anchor, setAnchor] = useState<HTMLAnchorElement | null>(null);
+    const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
+    const [deleteTarget, setDeleteTarget] = useState<string>('');
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
+    const handleClick = (event?: React.BaseSyntheticEvent) => {
+        if(event === undefined) return;
+        setAnchor(event.currentTarget as HTMLAnchorElement);
+    }
+
+    const handleClose = () => {
+        setAnchor(null);
+    }
+
+    const checkSubscribed = useCallback((packetId : string) => {
+        if(currentUser === null) return true;
+        const packetRef = db.collection("packets").doc(packetId)
+        return currentUser.subscribePacketRefs.filter((val) => (val.isEqual(packetRef))).length > 0
+    },[currentUser]);
+
+    const subscribePacket = async (packetId : string) => {
+        if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        const newSubscribePacketRef = db.collection('packets').doc(packetId);
+        await currentUserRef.update({
+            subscribePacketRefs : [...currentUser.subscribePacketRefs, newSubscribePacketRef]
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+            id : currentUser.id,
+            packetRefs : currentUser.packetRefs,
+            subscribePacketRefs: [...currentUser.subscribePacketRefs, newSubscribePacketRef],
+            displayName: currentUser.displayName,
+            photoUrl: currentUser.photoUrl
+        }
+        setCurrentUser(newCurrentUser);
+    }
+
+    const stopSubscribePacket = async (packetId : string) => {
+        if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        const stopSubscribePacketRef = db.collection('packets').doc(packetId);
+
+        //ユーザーのパケットレフを消す
+        const deletedSubscribeRefs = currentUser.subscribePacketRefs.filter((val) => (!val.isEqual(stopSubscribePacketRef)));
+        await currentUserRef.update({
+            subscribePacketRefs : deletedSubscribeRefs
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+            id : currentUser.id,
+            packetRefs : currentUser.packetRefs,
+            subscribePacketRefs: deletedSubscribeRefs,
+            displayName: currentUser.displayName,
+            photoUrl: currentUser.photoUrl
+        }
+        setCurrentUser(newCurrentUser);
+    }
+    const deletePackets = async () => {
+        if (deleteTarget === '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
+        //パケットを消す
+        const docRef = db.collection('packets').doc(deleteTarget);
+        await docRef.delete().catch((err) => console.log(err));
+        //ユーザーのパケットレフを消す
+        const deletedUserRefs = currentUser.packetRefs.filter((val) => (!val.isEqual(docRef)));
+        //ユーザーㇾプをアップデート
+        await currentUserRef.update({
+            packetRefs : deletedUserRefs
+        })
+        //カレントユーザーをアップデート
+        const newCurrentUser: User = {
+                    id : currentUser.id,
+                    packetRefs : deletedUserRefs,
+                    subscribePacketRefs: currentUser.subscribePacketRefs,
+                    displayName: currentUser.displayName,
+                    photoUrl: currentUser.photoUrl
+                }
+        setCurrentUser(newCurrentUser);
+        window.location.reload();
+      };
 
     useEffect(() => {
         if (props.match.params.packetId === undefined) return;
@@ -127,6 +219,9 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
         })
     }, [props.match.params.packetId, history]);
 
+    const Normal = {
+        marginRight:`1rem`,
+    }
     return (
         <PageContainer>
             {
@@ -145,7 +240,7 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                 <h2 className={styles.title}>
                     {packet?.title}
                 </h2>
-                    <IconButton aria-label="settings" style={{marginTop:`auto`,marginBottom:`auto`}}>
+                    <IconButton aria-label="settings" style={{marginTop:`auto`,marginBottom:`auto`}} onClick={handleClick}>
                         <MoreVertIcon />
                     </IconButton>
                 
@@ -158,7 +253,60 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                             <Bookmark url={url} key={i}/>
                         ))
                 }
+
+                <Menu
+                    id="simple-menu"
+                    anchorEl={anchor}
+                    keepMounted
+                    open={Boolean(anchor)}
+                    onClose={handleClose}
+                    >
+                    <CopyToClipBoard text={`https://link-packet.web.app/packets/${.acket.id}`} >
+                        <MenuItem onClick={handleClose}>
+                            <FileCopyIcon style={Normal} className={styles.gray}/> パケットのリンクをコピー 
+                        </MenuItem>
+                    </CopyToClipBoard>
+                    <MenuItem onClick={onClickShareButton(packet.id)}> 
+                        <TwitterIcon style={Normal} className={styles.twitter}/> 
+                        <span className={styles.twitter}>tweet</span>
+                    </MenuItem>
+                        {
+                            (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
+                            <>
+                                <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}>
+                                    <EditIcon style={Normal} className={styles.gray}/> パケットを編集 
+                                </MenuItem>
+                                <MenuItem onClick={() => 
+                                {
+                                    handleClose()
+                                    setDeleteTarget(packet.id)
+                                    setIsDialogOpen(true)
+                                }}> 
+                                    <DeleteIcon style={Normal} className={styles.warning}/>
+                                    <span className={styles.warning}>パケットを削除</span>
+                                </MenuItem>
+                            </>
+                        }
+
+                        {
+                            (packet !== undefined && user !== undefined && currentUser !== null && user.id !== currentUser.id)?(
+                                checkSubscribed(packet.id) ? (
+                                    <MenuItem onClick={() => stopSubscribePacket(packet.id)}>
+                                        <BookmarkIcon style={Normal} className={styles.gray}/> リンクをやめる
+                                    </MenuItem>
+                                    ) : (
+                                    <MenuItem onClick={() => subscribePacket(packet.id)}>
+                                        <BookmarkBorderIcon style={Normal} className={styles.gray}/> リンクする
+                                    </MenuItem>
+                                    )
+                            ):(
+                                <></>
+                            )
+                        }
+                </Menu>
             </List>
+            <YesNoDialog msg={'パケットを削除しますか？'} isOpen={isDialogOpen} doYes={deletePackets}
+                         doNo={() => setIsDialogOpen(false)}/>
         </PageContainer>
     )
 };
