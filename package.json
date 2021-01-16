@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@types/react-copy-to-clipboard": "^5.0.0",
-    "@types/react-helmet": "^6.1.0"
+    "@types/react-helmet": "^6.1.0",
+    "workbox-webpack-plugin": "^6.0.2"
   }
 }
