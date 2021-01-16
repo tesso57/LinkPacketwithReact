@@ -80,17 +80,20 @@ const Users : React.FC<urlProps> = (props) => {
             postedDate: firebase.firestore.Timestamp.now()
         }
 
-        const newCurrentUser: User = {
-            id : currentUser.id,
-            packetRefs : [...currentUser.packetRefs,packetRef],
-            subscribePacketRefs: currentUser.subscribePacketRefs,
-            displayName: currentUser.displayName,
-            photoUrl: currentUser.photoUrl
-        }
+        
 
         await db.collection('packets').add(initPacketData).then( async (docRef) => {
             //userをupdate
             const packetRef = db.collection('packets').doc(docRef.id);
+
+            const newCurrentUser: User = {
+                id : currentUser.id,
+                packetRefs : [...currentUser.packetRefs,packetRef],
+                subscribePacketRefs: currentUser.subscribePacketRefs,
+                displayName: currentUser.displayName,
+                photoUrl: currentUser.photoUrl
+            }
+            
             await currentUserRef.update({
                 packetRefs : [...currentUser.packetRefs, packetRef]
             })
