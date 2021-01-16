@@ -16,7 +16,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import YesNoDialog from './Layout/YesNoDialog'
+import YesNoDialog from '../components/Layout/YesNoDialog'
 
 const createTwitterUrl = (url: string) => {
     const shareText = 'おすすめのパケットを共有します！';
@@ -261,17 +261,17 @@ const PacketDetails: React.FC<UrlProps> = (props) => {
                     open={Boolean(anchor)}
                     onClose={handleClose}
                     >
-                    <CopyToClipBoard text={`https://link-packet.web.app/packets/${.acket.id}`} >
+                    <CopyToClipBoard text={`https://link-packet.web.app/packets/${packet?.id}`} >
                         <MenuItem onClick={handleClose}>
                             <FileCopyIcon style={Normal} className={styles.gray}/> パケットのリンクをコピー 
                         </MenuItem>
                     </CopyToClipBoard>
-                    <MenuItem onClick={onClickShareButton(packet.id)}> 
+                    <MenuItem onClick={onClickShareButton(packet?.id)}> 
                         <TwitterIcon style={Normal} className={styles.twitter}/> 
                         <span className={styles.twitter}>tweet</span>
                     </MenuItem>
                         {
-                            (user !== undefined && currentUser !== null && user.id === currentUser.id) &&
+                            (packet !== undefined && user !== undefined && currentUser !== null && user.id === currentUser.id) &&
                             <>
                                 <MenuItem onClick={() => history.push(`/edit/${packet.id}`)}>
                                     <EditIcon style={Normal} className={styles.gray}/> パケットを編集 
