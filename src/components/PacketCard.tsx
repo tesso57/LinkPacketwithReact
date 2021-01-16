@@ -95,6 +95,7 @@ const PacketCard: FC<Props> = (props) => {
 
     const checkSubscribed = useCallback((packetId : string) => {
         if(currentUser === null) return true;
+        if(packetId.length < 19) return
         const packetRef = db.collection("packets").doc(packetId)
         return currentUser.subscribePacketRefs.filter((val) => (val.isEqual(packetRef))).length > 0
     },[currentUser]);
@@ -118,6 +119,7 @@ const PacketCard: FC<Props> = (props) => {
 
     const stopSubscribePacket = async (packetId : string) => {
         if(currentUser === null || currentUserRef === undefined || packetId === '' || setCurrentUser === undefined) return
+        if(packetId.length < 19) return
         const stopSubscribePacketRef = db.collection('packets').doc(packetId);
 
         //ユーザーのパケットレフを消す

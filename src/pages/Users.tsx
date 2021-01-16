@@ -22,6 +22,7 @@ const Users : React.FC<urlProps> = (props) => {
     const [nonSubscribePacketFlag, setNonSubscribePacketFlag] = useState<boolean>(false);
 
     useEffect(() => {
+        if(props.match.params.userId.length < 19) return
         const docRef = db.collection('users').doc(props.match.params.userId);
         docRef.get().then((doc) => {
             if(doc.exists){
@@ -67,7 +68,7 @@ const Users : React.FC<urlProps> = (props) => {
         })
     },[history, props.match.params.userId])
 
-    const createButton = () => {
+    const createButton = async () => {
         //新規bookmarkを発行
         if (currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return
         //packetDataを新既発行
@@ -78,17 +79,13 @@ const Users : React.FC<urlProps> = (props) => {
             title: '無題のパケット',
             postedDate: firebase.firestore.Timestamp.now()
         }
+
         
-        db.collection('packets').add(initPacketData).then((docRef) => {
+
+        await db.collection('packets').add(initPacketData).then( async (docRef) => {
             //userをupdate
             const packetRef = db.collection('packets').doc(docRef.id);
-            currentUserRef.update({
-                packetRefs : [...currentUser.packetRefs, packetRef]
-            })
-            //dbをupdate
-            db.collection('packets').doc(docRef.id).update({
-                id : docRef.id
-            })
+
             const newCurrentUser: User = {
                 id : currentUser.id,
                 packetRefs : [...currentUser.packetRefs,packetRef],
@@ -96,10 +93,19 @@ const Users : React.FC<urlProps> = (props) => {
                 displayName: currentUser.displayName,
                 photoUrl: currentUser.photoUrl
             }
+            
+            await currentUserRef.update({
+                packetRefs : [...currentUser.packetRefs, packetRef]
+            })
+            //dbをupdate
+            await db.collection('packets').doc(docRef.id).update({
+                id : docRef.id
+            })
             setCurrentUser(newCurrentUser);
-            history.push(`/edit/${docRef.id}`)
+            history.push(`/edit/${docRef.id}`);
         })
     }
+
     return(
         <PageContainer>
             <div className={styles.userContainer}>

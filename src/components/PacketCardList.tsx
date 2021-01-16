@@ -13,6 +13,7 @@ const PacketCardList: FC<{ packets: Packet[] }> = ({ packets }) => {
     const {currentUser,currentUserRef,setCurrentUser} = useContext(AuthContext);
     const deletePackets = async () => {
             if (deleteTarget === '' || currentUserRef === undefined || currentUser === null || setCurrentUser === undefined) return;
+            if(deleteTarget.length < 19) return
             //パケットを消す
             const docRef = db.collection('packets').doc(deleteTarget);
             await docRef.delete().catch((err) => console.log(err));

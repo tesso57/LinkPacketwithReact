@@ -80,7 +80,7 @@ const Header: React.FC = () => {
                         anchorEl={anchorEl}
                         keepMounted
                         open={open}
-                        onClose={handleClose}
+                        onClose={handleClose('')}
                         PaperProps={{
                             style: {
                                 maxHeight: ITEM_HEIGHT * 4.5,

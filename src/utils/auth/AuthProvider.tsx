@@ -29,7 +29,7 @@ const AuthProvider: React.FC = ({children}) => {
                 if(user === null) return
                 const docRef = db.collection('users').doc(user.uid);
                 setCurrentUserRef(docRef);
-                docRef.get().then((doc) => {
+                docRef.get().then( async (doc) => {
                     if(doc.exists){
                         setCurrentUser(doc.data() as User)
                     }else{
@@ -43,7 +43,7 @@ const AuthProvider: React.FC = ({children}) => {
                         setCurrentUser(initUser)
 
                         //初期UserをDBにUPLOAD
-                        db.collection('users')
+                        await db.collection('users')
                             .doc(initUser.id)
                             .set(initUser)
                             .catch((err) => alert(err))
