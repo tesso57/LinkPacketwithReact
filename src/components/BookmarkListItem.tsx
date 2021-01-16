@@ -11,6 +11,7 @@ type Props = {
   index?: number,
   editable?: boolean,
   onChange?: (index: number, newUrl: URL) => void,
+  save?: () => void,
   deleteUrl?: (index: number) => void
 };
 
@@ -73,6 +74,7 @@ const BookmarkListItem: FC<Props> = (props) => {
     }
     if(props.index !== undefined && props.onChange !== undefined) props.onChange(props.index, newUrl);
     setEditFlag(false);
+    if(props.save !== undefined) props.save();
   };
   const cancel = () => {
     setEditFlag(false);
