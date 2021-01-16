@@ -64,15 +64,12 @@ const EditPacketPage: FC<urlProps> = (props) => {
 
   const save = async () => {
     if(packet === undefined) return;
-    else if(packet.urls.length === 0) {
-      setPacketErrorAlert("No bookmarks have been added!");
-      return;
-    }
-    setMessage("auto save in progress...");
+    else if(packet.urls.length === 0) setPacketErrorAlert("No bookmarks have been added!");
+    else setMessage("auto save in progress...");
     if(packetId.length < 19) return
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
-    setPacketErrorAlert(undefined);
+    if(packet.urls.length !== 0) setPacketErrorAlert(undefined);
     setMessage("saved successfully!");
     setEdited(true);
   };

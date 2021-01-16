@@ -32,7 +32,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
     const newPacket: Packet = props.packet;
     newPacket.title = newTitle;
     newPacket.postedDate = firebase.firestore.Timestamp.now();
-    if(props.onChange !== undefined) props.onChange(newPacket);
+    props.onChange && props.onChange(newPacket);
   };
   const [title, setTitle] = useState<string>('');
   const [url, setUrl] = useState<string>('');
