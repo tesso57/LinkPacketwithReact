@@ -40,9 +40,10 @@ const head10 = (str: string) => {
     return result.join('') + '...';
 };
 
-const formatDate = (date :Date) => (
-    `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日に更新`
-)
+const formatDate = (date :Date | undefined) => {
+    if(date === undefined) return '';
+    return    `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日に更新`
+}
 
 type Props = {
     url : URL;
