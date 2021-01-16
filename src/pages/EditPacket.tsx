@@ -12,7 +12,6 @@ import { AuthContext } from '../utils/auth/AuthProvider';
 type urlProps = {} & RouteComponentProps<{packetId : string}>;
 
 const fetchPacket = (packetId: string) => {
-  if(packetId.length < 19) return
   return db.collection('packets').doc(packetId).get()
 }
 
