@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useContext, Suspense } from 'react';
+import React, { FC, useState, useEffect, useContext, Suspense, useCallback } from 'react';
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
@@ -73,6 +73,7 @@ const EditPacketPage: FC<urlProps> = (props) => {
     setMessage("saved successfully!");
     setEdited(true);
   };
+  const saveCallback = useCallback(save, [packet, packetId]);
 
   const goMyPage = async () => {
     if(!edited) {
@@ -96,16 +97,16 @@ const EditPacketPage: FC<urlProps> = (props) => {
     if(info.packet === undefined) history.push('/');
     else if(info.packetOwner === undefined || info.packetOwner.id !== auth.currentUser?.id) history.push('/packet/' + packetId);
     else {
-      save();
+      saveCallback();
       if(info.packet.urls.length !== 0) setEdited(true);
       setPacket(info.packet);
     }
-  }, [info, packetId, auth.currentUser?.id, history]);
+  }, [info, packetId, auth.currentUser?.id, history, saveCallback]);
 
   return (
     <PageContainer>
       <Button size="large" startIcon={<KeyboardReturnIcon />} onClick={goMyPage}>マイページに戻る</Button>
-      { (packet !== undefined) ? <BookmarkList packet={packet} save={save} message={message} onChange={setPacket} packetErrorAlert={packetErrorAlert} setPacketErrorAlert={setPacketErrorAlert} editable /> : <></> }
+      { (packet !== undefined) ? <BookmarkList packet={packet} save={saveCallback} message={message} onChange={setPacket} packetErrorAlert={packetErrorAlert} setPacketErrorAlert={setPacketErrorAlert} editable /> : <></> }
     </PageContainer>
   );
 };
