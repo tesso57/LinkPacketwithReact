@@ -8,6 +8,7 @@ import { Packet, URL } from '../utils/types/index';
 import BookmarkListItem from './BookmarkListItem';
 import EditBookmark from './EditBookmark';
 import styles from './BookmarkList.module.scss';
+import {firebase} from '../firebase'
 
 type Props = {
   packet: Packet,
@@ -65,6 +66,7 @@ const BookmarkList: FC<Props> = (props: Props) => {
   const mergeURL = (index: number, newUrl: URL) => {
     const newPacket: Packet = props.packet;
     newPacket.urls[index] = newUrl;
+    newPacket.postedDate = firebase.firestore.Timestamp.now();
     if(props.onChange !== undefined) props.onChange(newPacket);
     setListItem(props.packet?.urls.map((url, i) => <BookmarkListItem key={url.link} url={url} index={i} onChange={mergeURL} deleteUrl={deleteUrl} editable />));
   };
