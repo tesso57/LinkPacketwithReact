@@ -91,6 +91,7 @@ const BookmarkListItem: FC<Props> = (props) => {
   };
   const deleteButton = () => {
     if(props.index !== undefined && props.deleteUrl !== undefined) props.deleteUrl(props.index);
+    props.save && props.save();
   };
   const width = useWindowDimensions();
 

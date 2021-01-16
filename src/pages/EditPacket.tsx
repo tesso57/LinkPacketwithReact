@@ -65,15 +65,16 @@ const EditPacketPage: FC<urlProps> = (props) => {
   const save = async () => {
     if(packet === undefined) return;
     else if(packet.urls.length === 0) setPacketErrorAlert("No bookmarks have been added!");
-    else setMessage("auto save in progress...");
-    if(packetId.length < 19) return
+    if(packetId.length < 19) return;
+    setMessage("auto save in progress...");
     const docRef = db.collection('packets').doc(packetId);
     await docRef.update(packet);
     if(packet.urls.length !== 0) setPacketErrorAlert(undefined);
     setMessage("saved successfully!");
     setEdited(true);
+    infoCache = { packet: packet, packetOwner: info.packetOwner } as InfoType;
   };
-  const saveCallback = useCallback(save, [packet, packetId]);
+  const saveCallback = useCallback(save, [packet, packetId, info]);
 
   const goMyPage = async () => {
     if(!edited) {
