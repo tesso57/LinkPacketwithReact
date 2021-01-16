@@ -7,7 +7,7 @@ const Footer: FC = () => (
   <Toolbar className={styles.Footer}>
     <div className={styles.FooterElements}>
       <img className={styles.FooterImage} src={faviconURL} alt="favicon"></img>
-      <p className={styles.FooterText}>© 2020LinkPacket</p>
+      <p className={styles.FooterText}>© 2021LinkPacket</p>
     </div>
   </Toolbar>
 );
